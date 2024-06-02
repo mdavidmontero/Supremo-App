@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import {Button, Provider, Portal} from 'react-native-paper';
+import {globalStyles} from '../../../config/theme/theme';
 
 export const GeneratorList = ({onSelect}) => {
   const [generators, setGenerators] = useState([]);
@@ -41,7 +42,10 @@ export const GeneratorList = ({onSelect}) => {
 
   return (
     <>
-      <Button mode="contained" onPress={() => setModalVisible(true)}>
+      <Button
+        style={globalStyles.buttonSucces}
+        mode="contained"
+        onPress={() => setModalVisible(true)}>
         Select Generator
       </Button>
       <Provider>

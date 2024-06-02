@@ -9,9 +9,7 @@ export const getVehicleByVin = async (id: string): Promise<Vehicle> => {
     const {data} = await vehicleApi<VehicleDBVehicleResponse>(
       `/vehicles?vin=${id}`,
     );
-    console.log(data);
     const vehicle = await VehicleMapper.fromVehicleDBEntity(data[0]);
-    console.log(vehicle);
     return vehicle;
   } catch (error) {
     console.log(error);

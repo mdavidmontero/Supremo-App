@@ -2,7 +2,23 @@ import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import {Card, Text} from 'react-native-paper';
 
-export const DetailsVehicle = ({model, year, plate, color, vim, isVisible}) => {
+interface Props {
+  model: string;
+  year: number;
+  plate: string;
+  color: string;
+  vim: string;
+  isVisible: boolean;
+}
+
+export const DetailsVehicle = ({
+  model,
+  year,
+  plate,
+  color,
+  vim,
+  isVisible,
+}: Props) => {
   if (!isVisible) {
     return null;
   }
@@ -47,7 +63,7 @@ const styles = StyleSheet.create({
   },
   card: {
     width: '100%',
-    backgroundColor: '#ffffff',
+    backgroundColor: '#B2EBF2',
     borderRadius: 10,
     elevation: 3,
     shadowColor: '#000',
@@ -69,8 +85,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   label: {
-    fontSize: 16,
-    fontWeight: '600',
+    fontSize: 17,
+    fontWeight: 'bold',
   },
   value: {
     fontSize: 16,

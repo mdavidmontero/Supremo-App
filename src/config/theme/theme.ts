@@ -1,7 +1,7 @@
 import {StyleSheet} from 'react-native';
 
 export const globalColors = {
-  primary: '#00838F',
+  primary: '#00ACC1',
   secondary: '#f72585',
   tertiary: '#3a0ca3',
   success: '#4cc9f0',
@@ -35,5 +35,8 @@ export const globalStyles = StyleSheet.create({
     top: 15,
     left: 13,
     zIndex: 1, // Ajusta el orden de renderizado
+  },
+  buttonSucces: {
+    backgroundColor: '#00ACC1',
   },
 });

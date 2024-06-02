@@ -1,24 +1,24 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {View} from 'react-native';
 import {HamburgerMenu} from '../../components/shared/HamburgerMenu';
 import {globalStyles} from '../../../config/theme/theme';
 import {Text} from 'react-native-paper';
+// import firestore from '@react-native-firebase/firestore';
 export const HomeScreen = () => {
   // const [datos, setDatos] = React.useState<any>([]);
 
   // const loadData = async () => {
   //   try {
   //     const data = await firestore().collection('inventario').get();
-  //     console.log(data.docs[0]);
-  //     setDatos(data.docs);
+  //     setDatos(data.docs[0].data());
   //   } catch (error) {
   //     console.log(error);
   //   }
   // };
 
-  useEffect(() => {
-    // loadData();
-  }, []);
+  // useEffect(() => {
+  //   loadData();
+  // }, []);
 
   // const renderItem = ({item}) => {
   //   return (
@@ -47,6 +47,9 @@ export const HomeScreen = () => {
     <View style={globalStyles.container}>
       <HamburgerMenu />
       <Text>Hola</Text>
+      {/* <Text>{datos.nombre}</Text>
+      <Text>{datos.precio}</Text>
+      <Text>{datos.modelo}</Text> */}
     </View>
   );
 };

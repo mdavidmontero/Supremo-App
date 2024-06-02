@@ -15,6 +15,7 @@ import {Vehicle} from '../../../domain/entities/vehicle.entity';
 import {DetailsVehicle} from '../../components/ui/DetailsVehicle';
 import {DrawerActions, useNavigation} from '@react-navigation/native';
 import {GeneratorList} from '../../components/ui/GeneratorList';
+import {globalStyles} from '../../../config/theme/theme';
 
 export const RepairsScreen = () => {
   const [vim, setVim] = useState('');
@@ -98,6 +99,7 @@ export const RepairsScreen = () => {
           </Text>
         )}
         <Button
+          style={globalStyles.buttonSucces}
           mode="contained"
           onPress={handleProceed}
           disabled={

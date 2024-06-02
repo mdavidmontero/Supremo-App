@@ -10,7 +10,6 @@ export const ReportScreen = ({route, navigation}) => {
   const [loading, setLoading] = useState(false);
   const [datos, setDatos] = React.useState<any>([]);
 
-  console.log(generator);
   const loadData = async () => {
     try {
       const generatorDoc = await firestore()
@@ -93,6 +92,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     color: 'black',
     alignItems: 'center',
+    textDecorationLine: 'underline',
+    textDecorationStyle: 'double',
   },
   detailContainer: {
     marginBottom: 20,
