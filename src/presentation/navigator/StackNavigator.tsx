@@ -6,12 +6,14 @@ import {RepairsScreen} from '../screens/repairs/RepairsScreen';
 import {useNavigation} from '@react-navigation/native';
 import {useEffect} from 'react';
 import {Setting} from '../screens/Settings';
+import {ReportScreen} from '../screens/repairs/ReportScreen';
 
 export type RootStackParamList = {
   Home: undefined;
   Setting: undefined;
   Generator: undefined;
   Repairs: undefined;
+  ReportScreen: {vehicleId: number};
 };
 
 const Stack = createStackNavigator();
@@ -38,6 +40,7 @@ export const StackNavigator = () => {
       <Stack.Screen name="Generator" component={GeneratorScreen} />
       <Stack.Screen name="Repairs" component={RepairsScreen} />
       <Stack.Screen name="Setting" component={Setting} />
+      <Stack.Screen name="ReportScreen" component={ReportScreen} />
     </Stack.Navigator>
   );
 };

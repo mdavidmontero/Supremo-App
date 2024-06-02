@@ -1,4 +1,3 @@
-/* eslint-disable react/no-unstable-nested-components */
 import React, {useEffect, useState} from 'react';
 import {
   Dimensions,
@@ -8,18 +7,20 @@ import {
   ScrollView,
   Pressable,
 } from 'react-native';
-import {TextInput} from 'react-native-paper';
+import {Button, TextInput} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Ionicons';
 const {width, height} = Dimensions.get('window');
 import {getVehicleByVin} from '../../../actions/get-vehicle-by-vin';
 import {Vehicle} from '../../../domain/entities/vehicle.entity';
 import {DetailsVehicle} from '../../components/ui/DetailsVehicle';
 import {DrawerActions, useNavigation} from '@react-navigation/native';
+import {GeneratorList} from '../../components/ui/GeneratorList';
 
 export const RepairsScreen = () => {
   const [vim, setVim] = useState('');
-  const [data, setData] = useState<Vehicle | null>(null); // Inicializa como null para indicar que no hay datos aún
-  const [loading, setLoading] = useState(false); // Estado para indicar si se está cargando
+  const [selectedGeneratorId, setSelectedGeneratorId] = useState(null);
+  const [data, setData] = useState<Vehicle | null>(null);
+  const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
   const handleSearch = (text: string) => {
     setVim(text);
@@ -44,6 +45,16 @@ export const RepairsScreen = () => {
 
     fetchData();
   }, [vim]);
+
+  const handleProceed = () => {
+    if (data && selectedGeneratorId) {
+      navigation.navigate('ReportScreen', {
+        vehicle: data,
+        generator: selectedGeneratorId,
+      });
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Pressable
@@ -79,6 +90,29 @@ export const RepairsScreen = () => {
             isVisible={!!data && !loading}
           />
         )}
+
+        <GeneratorList onSelect={setSelectedGeneratorId} />
+        {selectedGeneratorId && (
+          <Text style={styles.selectedText}>
+            Selected Generator ID: {selectedGeneratorId}
+          </Text>
+        )}
+        <Button
+          mode="contained"
+          onPress={handleProceed}
+          disabled={
+            !data ||
+            !(
+              <Button
+                mode="contained"
+                onPress={handleProceed}
+                disabled={!data || !selectedGeneratorId}>
+                Proceed to Report
+              </Button>
+            )
+          }>
+          Proceed to Report
+        </Button>
       </ScrollView>
     </View>
   );
@@ -127,7 +161,6 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
   },
-
   containerForm: {
     flex: 1,
     backgroundColor: '#fff',
@@ -153,5 +186,13 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     textAlign: 'center',
     fontWeight: '700',
+  },
+  generatorListContainer: {
+    marginTop: 100,
+  },
+  selectedText: {
+    marginTop: 20,
+    fontSize: 18,
+    color: 'green',
   },
 });

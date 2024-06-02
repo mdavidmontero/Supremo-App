@@ -3,9 +3,17 @@ import {Pressable, StyleSheet, Text, View} from 'react-native';
 import {globalStyles} from '../../../config/theme/theme';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {DrawerActions, useNavigation} from '@react-navigation/native';
+// import {seedDatabase} from '../../../data/seeder';
 
 export const GeneratorScreen = () => {
+  // const [hasSeeded, setHasSeeded] = useState(false);
   const navigation = useNavigation();
+  // useEffect(() => {
+  //   if (!hasSeeded) {
+  //     seedDatabase().then(() => setHasSeeded(true));
+  //   }
+  // }, [hasSeeded]);
+
   return (
     <View style={globalStyles.container}>
       <Pressable
