@@ -10,7 +10,6 @@ import {
 import {Text, View, useWindowDimensions, Image, StyleSheet} from 'react-native';
 import {globalColors} from '../../config/theme/theme';
 import {IonIcon} from '../components/shared/IonIcon';
-import {HomeScreen} from '../screens/home/HomeScreen';
 import {RepairsScreen} from '../screens/repairs/RepairsScreen';
 import {GeneratorScreen} from '../screens/generator/GeneratorScreen';
 import {StackNavigator} from '../navigator/StackNavigator';
@@ -24,7 +23,7 @@ export const SideMenuNavigator = () => {
       drawerContent={props => <CustomDrawerContent {...props} />}
       screenOptions={{
         drawerType: dimensions.width >= 758 ? 'permanent' : 'slide',
-        headerShown: true,
+        headerShown: false,
         drawerActiveBackgroundColor: globalColors.primary,
         drawerActiveTintColor: 'white',
         drawerInactiveBackgroundColor: 'white',

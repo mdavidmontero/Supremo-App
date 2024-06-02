@@ -1,26 +1,60 @@
 /* eslint-disable react/no-unstable-nested-components */
-import React, {useState} from 'react';
-import {Dimensions, StyleSheet, View, Text} from 'react-native';
-import {HamburgerMenu} from '../../components/shared/HamburgerMenu';
+import React, {useEffect, useState} from 'react';
+import {
+  Dimensions,
+  StyleSheet,
+  View,
+  Text,
+  ScrollView,
+  Pressable,
+} from 'react-native';
 import {TextInput} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Ionicons';
-
 const {width, height} = Dimensions.get('window');
+import {getVehicleByVin} from '../../../actions/get-vehicle-by-vin';
+import {Vehicle} from '../../../domain/entities/vehicle.entity';
+import {DetailsVehicle} from '../../components/ui/DetailsVehicle';
+import {DrawerActions, useNavigation} from '@react-navigation/native';
 
 export const RepairsScreen = () => {
   const [vim, setVim] = useState('');
+  const [data, setData] = useState<Vehicle | null>(null); // Inicializa como null para indicar que no hay datos aún
+  const [loading, setLoading] = useState(false); // Estado para indicar si se está cargando
+  const navigation = useNavigation();
   const handleSearch = (text: string) => {
     setVim(text);
-    // Aquí puedes agregar tu lógica de búsqueda de API
-    console.log('Buscar:', text);
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!vim) {
+        setData(null);
+        return;
+      }
+      setLoading(true);
+      try {
+        const vehicle = await getVehicleByVin(vim);
+        setData(vehicle);
+      } catch (error) {
+        console.error('Error fetching vehicle:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [vim]);
   return (
     <View style={styles.container}>
+      <Pressable
+        style={styles.menuIconContainer}
+        onPress={() => navigation.dispatch(DrawerActions.toggleDrawer)}>
+        <Icon name="menu-outline" size={30} color="#900" />
+      </Pressable>
       <View style={styles.topCircle}>
-        <HamburgerMenu />
-        <Text style={styles.title}>Repais</Text>
+        <Text style={styles.title}>Repairs</Text>
       </View>
-      <View style={styles.containerForm}>
+      <ScrollView style={styles.containerForm}>
         <Text style={styles.text}>Escriba el VIM del Vehiculo</Text>
         <TextInput
           mode="outlined"
@@ -35,7 +69,17 @@ export const RepairsScreen = () => {
           value={vim}
           onChangeText={handleSearch}
         />
-      </View>
+        {data && (
+          <DetailsVehicle
+            color={data?.color}
+            model={data?.model}
+            plate={data?.licensePlate}
+            vim={data?.vin}
+            year={data?.year}
+            isVisible={!!data && !loading}
+          />
+        )}
+      </ScrollView>
     </View>
   );
 };
@@ -49,7 +93,7 @@ const styles = StyleSheet.create({
     fontSize: 30,
     color: 'white',
     fontWeight: 'bold',
-    bottom: 60,
+    bottom: 70,
   },
   topCircle: {
     width: width,
@@ -65,9 +109,15 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
   },
+  menuIconContainer: {
+    position: 'absolute',
+    top: 15,
+    left: 13,
+    zIndex: 1,
+  },
   bottomSection: {
     flex: 1,
-    backgroundColor: '#fff', // Ajusta según tu preferencia
+    backgroundColor: '#fff',
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     padding: 20,
@@ -91,6 +141,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
     elevation: 5,
+    overflow: 'hidden',
   },
   input: {
     marginBottom: 15,

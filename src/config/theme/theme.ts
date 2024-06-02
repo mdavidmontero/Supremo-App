@@ -30,4 +30,10 @@ export const globalStyles = StyleSheet.create({
     color: globalColors.background,
     fontSize: 18,
   },
+  menuIconContainer: {
+    position: 'absolute', // Ajusta el contenedor en la esquina izquierda
+    top: 15,
+    left: 13,
+    zIndex: 1, // Ajusta el orden de renderizado
+  },
 });
