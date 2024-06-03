@@ -13,7 +13,7 @@ export const loadReports = async (): Promise<Report[]> => {
     const reports = dataSnapshot.docs.map(doc => {
       const data = doc.data();
       const id = doc.id;
-      return {...ReportMapper.fromFirestoreData(data), id};
+      return {id, ...ReportMapper.fromFirestoreData(data)};
     });
     return reports;
   } catch (error) {

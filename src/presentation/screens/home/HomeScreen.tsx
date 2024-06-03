@@ -117,7 +117,7 @@ export const HomeScreen = () => {
               horizontal
               data={reports}
               renderItem={renderItem}
-              keyExtractor={item => item.id}
+              keyExtractor={item => item.ids}
               contentContainerStyle={styles.contentContainer}
               onEndReached={loadMoreData}
               onEndReachedThreshold={0.5}

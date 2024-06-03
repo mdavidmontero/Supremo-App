@@ -1,5 +1,5 @@
 export interface Report {
-  id: string;
+  ids: string;
   vin: string;
   observations: string;
   status: string;
