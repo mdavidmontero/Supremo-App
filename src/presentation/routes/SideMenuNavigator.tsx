@@ -1,15 +1,12 @@
-/* eslint-disable react/no-unstable-nested-components */
-/* eslint-disable react-native/no-inline-styles */
 import React from 'react';
+import {Text, View, useWindowDimensions, Image, StyleSheet} from 'react-native';
 import {
   DrawerContentComponentProps,
   DrawerContentScrollView,
   DrawerItemList,
   createDrawerNavigator,
 } from '@react-navigation/drawer';
-import {Text, View, useWindowDimensions, Image, StyleSheet} from 'react-native';
 import {globalColors} from '../../config/theme/theme';
-import {IonIcon} from '../components/shared/IonIcon';
 import {useNavigation} from '@react-navigation/native';
 import {RootStackParamList, StackNavigator} from '../navigator/StackNavigator';
 import {Button} from 'react-native-paper';
@@ -38,7 +35,7 @@ export const SideMenuNavigator = () => {
         },
       }}>
       <Drawer.Screen
-        name="Home"
+        name="HomeScreen"
         component={StackNavigator}
         options={{
           drawerLabel: () => null,
@@ -63,12 +60,20 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
         />
       </View>
       <View style={styles.buttonContainer}>
-        <ButtonNav nav="Home" label="Home" icon="home-outline" />
-        <ButtonNav nav="Repairs" label="Repairs" icon="invert-mode-outline" />
+        <ButtonNav
+          nav="Home"
+          label="News"
+          icon={require('../../assets/Icon_News.png')}
+        />
+        <ButtonNav
+          nav="Repairs"
+          label="Repairs"
+          icon={require('../../assets/Icono_Repairs.png')}
+        />
         <ButtonNav
           nav="Generator"
           label="Generator"
-          icon="file-tray-stacked-outline"
+          icon={require('../../assets/Icon_Generator.png')}
         />
       </View>
       <DrawerItemList {...props} />
@@ -82,8 +87,9 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
 interface PropsButton {
   nav: string;
   label: string;
-  icon: string;
+  icon: any;
 }
+
 export const ButtonNav = ({nav, label, icon}: PropsButton) => {
   const navigation = useNavigation<RootStackParamList>();
   return (
@@ -91,11 +97,11 @@ export const ButtonNav = ({nav, label, icon}: PropsButton) => {
       mode="contained"
       onPress={() => navigation.navigate(nav)}
       style={styles.button}
-      labelStyle={styles.buttonLabel}
-      icon={({size, color}) => (
-        <IonIcon name={icon} size={size} color={color} />
-      )}>
-      {label}
+      labelStyle={styles.buttonLabel}>
+      <View style={styles.buttonContent}>
+        <Image source={icon} style={styles.buttonIcon} />
+        <Text style={styles.buttonLabel}>{label}</Text>
+      </View>
     </Button>
   );
 };
@@ -143,6 +149,16 @@ const styles = StyleSheet.create({
   },
   buttonLabel: {
     color: '#FFF',
+    fontSize: 16,
+  },
+  buttonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonIcon: {
+    width: 30,
+    height: 30,
   },
   footer: {
     marginTop: 'auto',

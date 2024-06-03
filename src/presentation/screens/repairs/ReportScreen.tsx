@@ -101,15 +101,26 @@ export const ReportScreen: React.FC<ReportScreenProps> = ({
           <ScrollView contentContainerStyle={styles.scrollViewContent}>
             <View style={styles.containerForm}>
               <Text style={styles.title}>Vehicle Report</Text>
-              <Text style={styles.label}>Vehicle VIN: {vehicle.vin}</Text>
-              <Text style={styles.label}>Vehicle Model: {vehicle.model}</Text>
-              <Text style={styles.label}>
-                Vehicle Plate: {vehicle.licensePlate}
-              </Text>
-              <Text style={styles.label}>Generator Name: {datos.nombre}</Text>
-              <Text style={styles.label}>
-                Generator Description: {datos.descripcion}
-              </Text>
+              <View style={styles.row}>
+                <Text style={styles.label}>Vehicle VIN: </Text>
+                <Text style={styles.value}>{vehicle.vin}</Text>
+              </View>
+              <View style={styles.row}>
+                <Text style={styles.label}>Vehicle Model: </Text>
+                <Text style={styles.value}>{vehicle.model}</Text>
+              </View>
+              <View style={styles.row}>
+                <Text style={styles.label}>Vehicle Plate: </Text>
+                <Text style={styles.value}>{vehicle.licensePlate}</Text>
+              </View>
+              <View style={styles.row}>
+                <Text style={styles.label}>Generator Name: </Text>
+                <Text style={styles.value}>{datos.nombre}</Text>
+              </View>
+              <View style={styles.row}>
+                <Text style={styles.label}>Generator Description: </Text>
+                <Text style={styles.value}>{datos.descripcion}</Text>
+              </View>
               <View style={styles.imagenContainer}>
                 <Image style={styles.image} source={{uri: datos.imagen}} />
               </View>
@@ -178,7 +189,7 @@ const styles = StyleSheet.create({
   },
   containerForm: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#B2EBF2',
     borderRadius: 30,
     padding: 20,
     marginBottom: 50,
@@ -189,20 +200,39 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
     overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#00ACC1',
+    borderStyle: 'solid',
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: '900',
     marginBottom: 20,
     color: 'black',
     alignItems: 'center',
-    textDecorationLine: 'underline',
-    textDecorationStyle: 'double',
+    borderStyle: 'solid',
+    textAlign: 'center',
+    borderTopWidth: 0,
+    borderLeftWidth: 0,
+    borderRightWidth: 0,
+    borderBottomWidth: 3,
+    borderBottomColor: '#00ACC1',
+  },
+  row: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    marginBottom: 10,
+    flexWrap: 'wrap',
   },
   label: {
     fontSize: 16,
     marginBottom: 5,
     color: 'black',
+    fontWeight: 'bold',
+  },
+  value: {
+    fontSize: 16,
+    color: '#555',
   },
   input: {
     marginBottom: 20,
