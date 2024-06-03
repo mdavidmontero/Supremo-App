@@ -1,31 +1,33 @@
+/* eslint-disable react-native/no-inline-styles */
+/* eslint-disable react/no-unstable-nested-components */
 import React, {useEffect, useState} from 'react';
+import {StyleSheet, Text} from 'react-native';
 import {
-  Dimensions,
-  StyleSheet,
-  View,
-  Text,
-  ScrollView,
-  Pressable,
-} from 'react-native';
-import {Button, TextInput} from 'react-native-paper';
+  ActivityIndicator,
+  Button,
+  TextInput,
+  useTheme,
+} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Ionicons';
-const {width, height} = Dimensions.get('window');
 import {getVehicleByVin} from '../../../actions/get-vehicle-by-vin';
 import {Vehicle} from '../../../domain/entities/vehicle.entity';
 import {DetailsVehicle} from '../../components/ui/DetailsVehicle';
-import {DrawerActions, useNavigation} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import {GeneratorList} from '../../components/ui/GeneratorList';
 import {globalStyles} from '../../../config/theme/theme';
+import {RootStackParamList} from '../../navigator/StackNavigator';
+import ContainerScreen from '../../components/shared/ContainerScreen';
 
 export const RepairsScreen = () => {
   const [vim, setVim] = useState('');
   const [selectedGeneratorId, setSelectedGeneratorId] = useState(null);
   const [data, setData] = useState<Vehicle | null>(null);
   const [loading, setLoading] = useState(false);
-  const navigation = useNavigation();
+  const navigation = useNavigation<RootStackParamList>();
   const handleSearch = (text: string) => {
     setVim(text);
   };
+  const {colors} = useTheme();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -52,25 +54,19 @@ export const RepairsScreen = () => {
       navigation.navigate('ReportScreen', {
         vehicle: data,
         generator: selectedGeneratorId,
-      });
+      }) as any;
     }
   };
 
   return (
-    <View style={styles.container}>
-      <Pressable
-        style={styles.menuIconContainer}
-        onPress={() => navigation.dispatch(DrawerActions.toggleDrawer)}>
-        <Icon name="menu-outline" size={30} color="#900" />
-      </Pressable>
-      <View style={styles.topCircle}>
-        <Text style={styles.title}>Repairs</Text>
-      </View>
-      <ScrollView style={styles.containerForm}>
+    <>
+      <ContainerScreen text="Repairs">
         <Text style={styles.text}>Escriba el VIM del Vehiculo</Text>
         <TextInput
           mode="outlined"
           style={styles.input}
+          autoCorrect={false}
+          autoFocus
           placeholder="Numero VIM"
           theme={{colors: {primary: '#00ACC1'}}}
           left={
@@ -78,9 +74,21 @@ export const RepairsScreen = () => {
               icon={() => <Icon name="search-outline" size={20} color="#000" />}
             />
           }
+          editable={true}
           value={vim}
           onChangeText={handleSearch}
+          keyboardType="default"
         />
+        {loading && (
+          <ActivityIndicator
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              backgroundColor: colors.background,
+              padding: 10,
+            }}
+          />
+        )}
         {data && (
           <DetailsVehicle
             color={data?.color}
@@ -91,7 +99,6 @@ export const RepairsScreen = () => {
             isVisible={!!data && !loading}
           />
         )}
-
         <GeneratorList onSelect={setSelectedGeneratorId} />
         {selectedGeneratorId && (
           <Text style={styles.selectedText}>
@@ -115,69 +122,12 @@ export const RepairsScreen = () => {
           }>
           Proceed to Report
         </Button>
-      </ScrollView>
-    </View>
+      </ContainerScreen>
+    </>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#ACE3E9',
-  },
-  title: {
-    fontSize: 30,
-    color: 'white',
-    fontWeight: 'bold',
-    bottom: 70,
-  },
-  topCircle: {
-    width: width,
-    height: height * 0.3,
-    backgroundColor: '#00ACC1',
-    borderBottomLeftRadius: width / 3,
-    borderBottomRightRadius: width / 3,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  menuIconContainer: {
-    position: 'absolute',
-    top: 15,
-    left: 13,
-    zIndex: 1,
-  },
-  bottomSection: {
-    flex: 1,
-    backgroundColor: '#fff',
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
-    padding: 20,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: -2},
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  containerForm: {
-    flex: 1,
-    backgroundColor: '#fff',
-    borderRadius: 30,
-    padding: 20,
-    marginTop: -height * 0.16,
-    marginBottom: 50,
-    marginHorizontal: 30,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
-    overflow: 'hidden',
-  },
   input: {
     marginBottom: 15,
     backgroundColor: '#fff',

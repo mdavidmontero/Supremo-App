@@ -12,21 +12,28 @@ import firestore from '@react-native-firebase/firestore';
 import {Button, Provider, Portal} from 'react-native-paper';
 import {globalStyles} from '../../../config/theme/theme';
 
-export const GeneratorList = ({onSelect}) => {
-  const [generators, setGenerators] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [modalVisible, setModalVisible] = useState(false);
+interface Generator {
+  id: string;
+  nombre: string;
+  descripcion: string;
+  imagen: string;
+}
+
+export const GeneratorList = ({onSelect}: any) => {
+  const [generators, setGenerators] = useState<Generator[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchGenerators = async () => {
       try {
-        const generatorList = [];
+        const generatorList: Generator[] = [];
         const querySnapshot = await firestore().collection('generadores').get();
         querySnapshot.forEach(documentSnapshot => {
           generatorList.push({
             ...documentSnapshot.data(),
             id: documentSnapshot.id,
-          });
+          } as Generator);
         });
         setGenerators(generatorList);
       } catch (error) {
@@ -35,7 +42,6 @@ export const GeneratorList = ({onSelect}) => {
         setLoading(false);
       }
     };
-    console.log(generators);
 
     fetchGenerators();
   }, []);

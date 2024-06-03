@@ -3,6 +3,7 @@ import {View} from 'react-native';
 import {HamburgerMenu} from '../../components/shared/HamburgerMenu';
 import {globalStyles} from '../../../config/theme/theme';
 import {Text} from 'react-native-paper';
+import ContainerScreen from '../../components/shared/ContainerScreen';
 // import firestore from '@react-native-firebase/firestore';
 export const HomeScreen = () => {
   // const [datos, setDatos] = React.useState<any>([]);
@@ -43,13 +44,5 @@ export const HomeScreen = () => {
   //   );
   // };
 
-  return (
-    <View style={globalStyles.container}>
-      <HamburgerMenu />
-      <Text>Hola</Text>
-      {/* <Text>{datos.nombre}</Text>
-      <Text>{datos.precio}</Text>
-      <Text>{datos.modelo}</Text> */}
-    </View>
-  );
+  return <ContainerScreen></ContainerScreen>;
 };

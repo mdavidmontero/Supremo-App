@@ -10,14 +10,15 @@ import {
 import {Text, View, useWindowDimensions, Image, StyleSheet} from 'react-native';
 import {globalColors} from '../../config/theme/theme';
 import {IonIcon} from '../components/shared/IonIcon';
-import {RepairsScreen} from '../screens/repairs/RepairsScreen';
-import {GeneratorScreen} from '../screens/generator/GeneratorScreen';
-import {StackNavigator} from '../navigator/StackNavigator';
+import {useNavigation} from '@react-navigation/native';
+import {RootStackParamList, StackNavigator} from '../navigator/StackNavigator';
+import {Button} from 'react-native-paper';
 
 const Drawer = createDrawerNavigator();
 
 export const SideMenuNavigator = () => {
   const dimensions = useWindowDimensions();
+
   return (
     <Drawer.Navigator
       drawerContent={props => <CustomDrawerContent {...props} />}
@@ -37,32 +38,14 @@ export const SideMenuNavigator = () => {
         },
       }}>
       <Drawer.Screen
-        name="News"
+        name="Home"
         component={StackNavigator}
         options={{
-          drawerIcon: ({color}) => (
-            <IonIcon name="home-outline" color={color} />
-          ),
+          drawerLabel: () => null,
+          drawerItemStyle: {
+            display: 'none',
+          },
         }}
-      />
-
-      <Drawer.Screen
-        options={{
-          drawerIcon: ({color}) => (
-            <IonIcon name="ribbon-outline" color={color} />
-          ),
-        }}
-        name="Repairs"
-        component={RepairsScreen}
-      />
-      <Drawer.Screen
-        options={{
-          drawerIcon: ({color}) => (
-            <IonIcon name="shield-checkmark-outline" color={color} />
-          ),
-        }}
-        name="Generator"
-        component={GeneratorScreen}
       />
     </Drawer.Navigator>
   );
@@ -74,14 +57,46 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
       {...props}
       contentContainerStyle={styles.drawerContent}>
       <View style={styles.header}>
-        {/* <Image source={require('../../assets/logo.png')} style={styles.logo} /> */}
-        <Text style={styles.headerText}>Bienvenido</Text>
+        <Image
+          source={require('../../assets/Imagotipo_Supremo_SinFondo.png')}
+          style={styles.logo}
+        />
+      </View>
+      <View style={styles.buttonContainer}>
+        <ButtonNav nav="Home" label="Home" icon="home-outline" />
+        <ButtonNav nav="Repairs" label="Repairs" icon="invert-mode-outline" />
+        <ButtonNav
+          nav="Generator"
+          label="Generator"
+          icon="file-tray-stacked-outline"
+        />
       </View>
       <DrawerItemList {...props} />
       <View style={styles.footer}>
         <Text style={styles.footerText}>© 2024 MyApp</Text>
       </View>
     </DrawerContentScrollView>
+  );
+};
+
+interface PropsButton {
+  nav: string;
+  label: string;
+  icon: string;
+}
+export const ButtonNav = ({nav, label, icon}: PropsButton) => {
+  const navigation = useNavigation<RootStackParamList>();
+  return (
+    <Button
+      mode="contained"
+      onPress={() => navigation.navigate(nav)}
+      style={styles.button}
+      labelStyle={styles.buttonLabel}
+      icon={({size, color}) => (
+        <IonIcon name={icon} size={size} color={color} />
+      )}>
+      {label}
+    </Button>
   );
 };
 
@@ -105,8 +120,8 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   logo: {
-    width: 100,
-    height: 100,
+    width: 230,
+    height: 220,
     borderRadius: 50,
     marginBottom: 10,
   },
@@ -114,6 +129,20 @@ const styles = StyleSheet.create({
     color: '#F5F5F5',
     fontSize: 20,
     fontWeight: 'bold',
+  },
+  buttonContainer: {
+    marginBottom: 20,
+    paddingHorizontal: 16,
+  },
+  button: {
+    marginBottom: 10,
+    marginHorizontal: 1,
+    backgroundColor: globalColors.primary,
+    padding: 2,
+    borderRadius: 3,
+  },
+  buttonLabel: {
+    color: '#FFF',
   },
   footer: {
     marginTop: 'auto',
@@ -125,3 +154,5 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
 });
+
+export default SideMenuNavigator;

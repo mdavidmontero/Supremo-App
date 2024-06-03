@@ -1,13 +1,10 @@
 import React from 'react';
-import {Pressable, StyleSheet, Text, View} from 'react-native';
-import {globalStyles} from '../../../config/theme/theme';
-import Icon from 'react-native-vector-icons/Ionicons';
-import {DrawerActions, useNavigation} from '@react-navigation/native';
+import {StyleSheet, Text, View} from 'react-native';
+import {ContainerScreen} from '../../components/shared/ContainerScreen';
 // import {seedDatabase} from '../../../data/seeder';
 
 export const GeneratorScreen = () => {
   // const [hasSeeded, setHasSeeded] = useState(false);
-  const navigation = useNavigation();
   // useEffect(() => {
   //   if (!hasSeeded) {
   //     seedDatabase().then(() => setHasSeeded(true));
@@ -15,22 +12,16 @@ export const GeneratorScreen = () => {
   // }, [hasSeeded]);
 
   return (
-    <View style={globalStyles.container}>
-      <Pressable
-        style={styles.menuIconContainer}
-        onPress={() => navigation.dispatch(DrawerActions.toggleDrawer)}>
-        <Icon name="menu-outline" size={30} color="#900" />
-      </Pressable>
-      <Text>GeneratorScreen</Text>
+    <View style={styles.container}>
+      <ContainerScreen text="Generators">
+        <Text style={{color: 'black'}}>Generators</Text>
+      </ContainerScreen>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  menuIconContainer: {
-    position: 'absolute',
-    top: 15,
-    left: 13,
-    zIndex: 1,
+  container: {
+    flex: 1,
   },
 });
