@@ -8,7 +8,7 @@ export class VehicleMapper {
     return {
       id: data.id,
       model: data.modelo,
-      year: data.año,
+      year: data.anio,
       licensePlate: data.placa,
       color: data.color,
       vin: data.vin,

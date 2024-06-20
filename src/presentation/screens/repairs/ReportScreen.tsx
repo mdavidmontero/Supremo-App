@@ -1,5 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-// ReportScreen.js
 import React, {useEffect, useState} from 'react';
 import {
   View,
@@ -16,11 +14,12 @@ import firestore from '@react-native-firebase/firestore';
 import {RootStackParamList} from '../../navigator/StackNavigator';
 import {RouteProp} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
-import {globalStyles} from '../../../config/theme/theme';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Logo} from '../../components/shared/Logo';
 import {ImagenPosition} from '../../components/ui/ImagenPosition';
 import {Title} from '../../components/shared/Title';
+import {ButtonActions} from '../../components/shared/ButtonActions';
+import {Vehicle} from '../../../domain/entities/vehicle.entity';
 
 const {width, height} = Dimensions.get('window');
 
@@ -44,6 +43,7 @@ export const ReportScreen: React.FC<ReportScreenProps> = ({
   const [observations, setObservations] = useState('');
   const [loading, setLoading] = useState(false);
   const [datos, setDatos] = React.useState<any>([]);
+  const [vehicles, setVehicle] = useState<Vehicle>(vehicle);
 
   const loadData = async () => {
     try {
@@ -133,13 +133,24 @@ export const ReportScreen: React.FC<ReportScreenProps> = ({
                 onChangeText={setObservations}
                 style={styles.input}
               />
-              <Button
+              {/* <Button
                 mode="contained"
                 style={globalStyles.buttonSucces}
                 onPress={handleSave}
                 loading={loading}>
                 Save Report
-              </Button>
+              </Button> */}
+
+              <ButtonActions
+                text="Next"
+                onPress={() => {
+                  navigation.navigate('Test', {
+                    vehicles: vehicles,
+                    generator: generator,
+                    observations: observations,
+                  });
+                }}
+              />
             </View>
           </ScrollView>
         </View>

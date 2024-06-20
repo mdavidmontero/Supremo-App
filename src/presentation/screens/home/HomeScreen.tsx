@@ -1,4 +1,3 @@
-/* eslint-disable react-native/no-inline-styles */
 import React, {useEffect, useState} from 'react';
 import {DrawerActions, useNavigation} from '@react-navigation/native';
 import {
@@ -10,6 +9,7 @@ import {
   FlatList,
   Text,
   ActivityIndicator,
+  RefreshControl,
 } from 'react-native';
 import {Logo} from '../../components/shared/Logo';
 import {ImagenPosition} from '../../components/ui/ImagenPosition';
@@ -26,6 +26,7 @@ export const HomeScreen = () => {
   const [loading, setLoading] = useState(false);
   const [lastDoc, setLastDoc] = useState<any>(null);
   const [fetchingMore, setFetchingMore] = useState(false);
+  const [refreshing, setRefreshing] = useState(false); // Nuevo estado para el refresco
 
   const loadData = async () => {
     setLoading(true);
@@ -37,6 +38,18 @@ export const HomeScreen = () => {
       console.error(error);
     }
     setLoading(false);
+  };
+
+  const refreshData = async () => {
+    setRefreshing(true);
+    try {
+      const refreshedReports = await loadReports();
+      setReports(refreshedReports);
+      setLastDoc(refreshedReports[refreshedReports.length - 1]);
+    } catch (error) {
+      console.error(error);
+    }
+    setRefreshing(false);
   };
 
   const loadMoreData = async () => {
@@ -68,7 +81,7 @@ export const HomeScreen = () => {
         </Text>
       )}
       <View style={styles.row}>
-        <Text style={styles.label}>Vim: </Text>
+        <Text style={styles.label}>Vin: </Text>
         <Text style={styles.cardTitle}>{item.vin}</Text>
       </View>
       <View style={styles.row}>
@@ -98,18 +111,9 @@ export const HomeScreen = () => {
         </Pressable>
         <View style={styles.topCircle}>
           <Title text="News" />
-          <Text
-            style={{
-              fontSize: 20,
-              color: '#fff',
-              fontWeight: 'bold',
-              bottom: 20,
-              right: 120,
-            }}>
-            Latest reports
-          </Text>
+          <Text style={styles.subtitle}>Latest reports</Text>
         </View>
-        <View style={{flex: 1, bottom: 120}}>
+        <View style={styles.listContainer}>
           {loading ? (
             <ActivityIndicator size="large" color="#00ACC1" />
           ) : (
@@ -121,6 +125,13 @@ export const HomeScreen = () => {
               contentContainerStyle={styles.contentContainer}
               onEndReached={loadMoreData}
               onEndReachedThreshold={0.5}
+              refreshControl={
+                <RefreshControl
+                  refreshing={refreshing}
+                  onRefresh={refreshData}
+                  colors={['#00ACC1']}
+                />
+              }
               ListFooterComponent={
                 fetchingMore ? (
                   <ActivityIndicator size="small" color="#00ACC1" />
@@ -166,8 +177,8 @@ const styles = StyleSheet.create({
     color: '#555',
   },
   topCircle: {
-    width: width,
-    height: height * 0.3,
+    width: '100%',
+    height: '30%',
     backgroundColor: '#00ACC1',
     borderBottomLeftRadius: width / 3,
     borderBottomRightRadius: width / 3,
@@ -194,7 +205,6 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 10,
     marginHorizontal: 10,
-    bottom: 0,
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
@@ -202,7 +212,6 @@ const styles = StyleSheet.create({
     elevation: 5,
     width: width * 0.7,
     height: height * 0.29,
-    overflow: 'scroll',
   },
   cardTitle: {
     fontSize: 16,
@@ -220,6 +229,18 @@ const styles = StyleSheet.create({
     top: -10,
     right: -5,
     zIndex: 3,
+  },
+  listContainer: {
+    flex: 1,
+    marginTop: -120,
+  },
+  subtitle: {
+    fontSize: 20,
+    color: '#FFF',
+    fontWeight: 'bold',
+    position: 'absolute',
+    paddingHorizontal: 25,
+    left: 0,
   },
 });
 

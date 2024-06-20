@@ -1,6 +1,3 @@
-/* eslint-disable react/react-in-jsx-scope */
-/* eslint-disable react-native/no-inline-styles */
-/* eslint-disable react/no-unstable-nested-components */
 import {DrawerActions, useNavigation} from '@react-navigation/native';
 import {useEffect} from 'react';
 import {Pressable} from 'react-native';
