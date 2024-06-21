@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {FC} from 'react';
 import {Text, View, StyleSheet, ScrollView} from 'react-native';
 
 interface Observation {
@@ -15,24 +15,26 @@ interface Props {
   observations: PreviousObservation[];
 }
 
-const PreviousObservationsList: React.FC<Props> = ({observations}) => {
+const PreviousObservationsList: FC<Props> = ({observations}) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.subtitle}>Previous Observations:</Text>
+      <Text style={styles.subtitle}>Last observation</Text>
       <ScrollView style={styles.scrollContainer}>
         {observations.length > 0 ? (
           observations.map((obs, index) => (
             <View key={obs.id}>
-              {obs.observations.map((item, itemIndex) => (
-                <View key={itemIndex} style={styles.observationContainer}>
-                  <View style={styles.observation}>
-                    <Text style={styles.observationText}>{item.text}</Text>
-                    <Text style={styles.observationDate}>
-                      {item.createdAt.toDate().toLocaleString()}
-                    </Text>
-                  </View>
+              <View style={styles.observationContainer}>
+                <View style={styles.observation}>
+                  <Text style={styles.observationText}>
+                    {obs.observations[obs.observations.length - 1].text}
+                  </Text>
+                  <Text style={styles.observationDate}>
+                    {obs.observations[obs.observations.length - 1].createdAt
+                      .toDate()
+                      .toLocaleString()}
+                  </Text>
                 </View>
-              ))}
+              </View>
             </View>
           ))
         ) : (
@@ -80,6 +82,7 @@ const styles = StyleSheet.create({
   noObservationsText: {
     textAlign: 'center',
     fontStyle: 'italic',
+    color: '#555',
   },
 });
 

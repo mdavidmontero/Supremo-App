@@ -38,7 +38,7 @@ export const TestVehicleScreen = ({navigation}: Props) => {
     step2: '',
     step3: '',
   });
-  const {vehicles, generator, observations, previousObservations} =
+  const {vehicles, generator, observations, previousObservations, status} =
     route.params;
 
   const handlePress = (step: number) => {
@@ -100,6 +100,7 @@ export const TestVehicleScreen = ({navigation}: Props) => {
           step1: stepData.step1,
           step2: stepData.step2,
           step3: stepData.step3,
+          status: status,
         });
       navigation.navigate('Home');
     } catch (error) {

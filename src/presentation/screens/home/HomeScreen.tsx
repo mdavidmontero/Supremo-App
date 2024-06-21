@@ -10,13 +10,14 @@ import {
   Text,
   ActivityIndicator,
   RefreshControl,
+  Image,
 } from 'react-native';
 import {Logo} from '../../components/shared/Logo';
 import {ImagenPosition} from '../../components/ui/ImagenPosition';
 import {Title} from '../../components/shared/Title';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {Report} from '../../../domain/entities/report.entity';
 import {loadMoreReports, loadReports} from '../../../actions/get-reports';
+import {Report} from '../../../domain/entities/report.entity';
 
 const {width, height} = Dimensions.get('window');
 
@@ -72,31 +73,40 @@ export const HomeScreen = () => {
     loadData();
   }, []);
 
-  const renderItem = ({item}: {item: Report}) => (
-    <View style={styles.card}>
-      {item.createdAt && (
-        <Text style={{color: 'grey', fontSize: 15}}>
-          {item.createdAt.toLocaleDateString()}{' '}
-          {item.createdAt.toLocaleTimeString()}
-        </Text>
-      )}
-      <View style={styles.row}>
-        <Text style={styles.label}>Vin: </Text>
-        <Text style={styles.cardTitle}>{item.vin}</Text>
+  const navigateToDetail = (item: Report) => {
+    // Navegar a la pantalla de detalles, pasando el reporte como parámetro
+    navigation.navigate('DetailReportScreen', {report: item});
+  };
+
+  const renderItem = ({item}: {item: any}) => (
+    <Pressable onPress={() => navigateToDetail(item)}>
+      <View style={styles.card}>
+        {item.createdAt && (
+          <Text style={{color: 'grey', fontSize: 15}}>
+            {item.createdAt.toLocaleDateString()}{' '}
+            {item.createdAt.toLocaleTimeString()}
+          </Text>
+        )}
+        <View style={styles.row}>
+          <Text style={styles.label}>Vin: </Text>
+          <Text style={styles.cardTitle}>{item.vin}</Text>
+        </View>
+        <View style={styles.row}>
+          <Text style={styles.label}>Status: </Text>
+          <Text style={styles.value}>{item.status}</Text>
+        </View>
+        <View style={styles.row}>
+          <Text style={styles.label}>Generator Id: </Text>
+          <Text style={styles.value}>{item.generatorId}</Text>
+        </View>
+        {item.generator && item.generator.imagen && (
+          <Image
+            source={{uri: item.generator.imagen}}
+            style={styles.generatorImage}
+          />
+        )}
       </View>
-      {/* <View style={styles.row}>
-        <Text style={styles.label}>Observations: </Text>
-        <Text style={styles.value}>{item.observations}</Text>
-      </View> */}
-      <View style={styles.row}>
-        <Text style={styles.label}>Status: </Text>
-        <Text style={styles.value}>{item.status}</Text>
-      </View>
-      <View style={styles.row}>
-        <Text style={styles.label}>Generator Id: </Text>
-        <Text style={styles.value}>{item.generatorId}</Text>
-      </View>
-    </View>
+    </Pressable>
   );
 
   return (
@@ -118,7 +128,6 @@ export const HomeScreen = () => {
             <ActivityIndicator size="large" color="#00ACC1" />
           ) : (
             <FlatList
-              horizontal
               data={reports}
               renderItem={renderItem}
               keyExtractor={item => item.ids}
@@ -197,21 +206,19 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   contentContainer: {
-    flexGrow: 1,
     paddingVertical: 20,
   },
   card: {
     backgroundColor: '#fff',
     padding: 10,
     borderRadius: 10,
-    marginHorizontal: 10,
+    marginVertical: 10,
+    marginHorizontal: 20,
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
     elevation: 5,
-    width: width * 0.7,
-    height: height * 0.29,
   },
   cardTitle: {
     fontSize: 16,
@@ -241,6 +248,13 @@ const styles = StyleSheet.create({
     position: 'absolute',
     paddingHorizontal: 25,
     left: 0,
+  },
+  generatorImage: {
+    width: '40%',
+    height: 150,
+    borderRadius: 10,
+    marginTop: 5,
+    alignSelf: 'center',
   },
 });
 

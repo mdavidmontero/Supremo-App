@@ -75,7 +75,6 @@ export const RepairsScreen = () => {
           editable={true}
           value={vim}
           onChangeText={handleSearch}
-          keyboardType="default"
         />
         {loading && (
           <ActivityIndicator

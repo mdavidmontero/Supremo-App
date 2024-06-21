@@ -39,7 +39,7 @@ export const ContainerScreen: React.FC<ContainerScreenProps> = ({
         <Logo style={styles.logo} />
         <ImagenPosition style={styles.imgPosition} />
 
-        {route.name === 'GeneratorDetail' ? (
+        {route.name === 'GeneratorDetail' || 'DetailReportScreen' ? (
           <Pressable
             style={styles.menuIconContainer}
             onPress={() => navigation.goBack()}>

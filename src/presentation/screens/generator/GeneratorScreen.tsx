@@ -1,22 +1,28 @@
 import React, {useEffect, useState} from 'react';
-import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  FlatList,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+  TextInputProps,
+} from 'react-native';
 import {ContainerScreen} from '../../components/shared/ContainerScreen';
 import {FadeInImage} from '../../components/ui/FadeInImage';
-// import {seedDatabase} from '../../../data/seeder';
 import firestore from '@react-native-firebase/firestore';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, NavigationProp} from '@react-navigation/native';
+import {Generator} from '../../../infrastructure/interfaces/generator-db.response';
+type RootStackParamList = {
+  GeneratorDetail: {generator: Generator};
+};
 
-interface Generator {
-  id: string;
-  nombre: string;
-  descripcion: string;
-  imagen: string;
-}
-
-export const GeneratorScreen = () => {
+export const GeneratorScreen: React.FC = () => {
   const [generators, setGenerators] = useState<Generator[]>([]);
+  const [filteredGenerators, setFilteredGenerators] = useState<Generator[]>([]);
+  const [searchText, setSearchText] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   useEffect(() => {
     const fetchGenerators = async () => {
@@ -30,6 +36,7 @@ export const GeneratorScreen = () => {
           } as Generator);
         });
         setGenerators(generatorList);
+        setFilteredGenerators(generatorList);
       } catch (error) {
         console.error('Error fetching generators: ', error);
       } finally {
@@ -39,14 +46,36 @@ export const GeneratorScreen = () => {
 
     fetchGenerators();
   }, []);
+
+  useEffect(() => {
+    filterGenerators(searchText);
+  }, [searchText, generators]);
+
+  const filterGenerators = (text: string) => {
+    const filtered = generators.filter(
+      generator =>
+        generator.nombre.toLowerCase().includes(text.toLowerCase()) ||
+        generator.descripcion.toLowerCase().includes(text.toLowerCase()),
+    );
+    setFilteredGenerators(filtered);
+  };
+
   const handleGeneratorPress = (generator: Generator) => {
     navigation.navigate('GeneratorDetail', {generator});
   };
+
   return (
     <View style={styles.container}>
       <ContainerScreen text="Generators">
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Buscar generador..."
+          placeholderTextColor="#c2c2c2"
+          value={searchText}
+          onChangeText={setSearchText}
+        />
         <View style={styles.columnContainer}>
-          {generators.map(generator => (
+          {filteredGenerators.map(generator => (
             <TouchableOpacity
               key={generator.id}
               style={styles.card}
@@ -65,6 +94,15 @@ export const GeneratorScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  searchInput: {
+    height: 40,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 5,
+    margin: 10,
+    paddingLeft: 10,
+    color: '#000',
   },
   columnContainer: {
     flexDirection: 'row',
@@ -93,10 +131,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 5,
-    color: '#333',
+    color: '#000',
   },
   description: {
     fontSize: 14,
     color: '#666',
   },
 });
+
+export default GeneratorScreen;

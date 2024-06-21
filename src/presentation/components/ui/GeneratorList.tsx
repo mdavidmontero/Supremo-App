@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Image,
   StyleSheet,
+  TextInput,
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import {Button, Provider, Portal} from 'react-native-paper';
@@ -21,6 +22,8 @@ interface Generator {
 
 export const GeneratorList = ({onSelect}: any) => {
   const [generators, setGenerators] = useState<Generator[]>([]);
+  const [filteredGenerators, setFilteredGenerators] = useState<Generator[]>([]);
+  const [searchText, setSearchText] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
 
@@ -36,6 +39,7 @@ export const GeneratorList = ({onSelect}: any) => {
           } as Generator);
         });
         setGenerators(generatorList);
+        setFilteredGenerators(generatorList);
       } catch (error) {
         console.error('Error fetching generators: ', error);
       } finally {
@@ -45,6 +49,19 @@ export const GeneratorList = ({onSelect}: any) => {
 
     fetchGenerators();
   }, []);
+
+  useEffect(() => {
+    filterGenerators(searchText);
+  }, [searchText, generators]);
+
+  const filterGenerators = (text: string) => {
+    const filtered = generators.filter(
+      generator =>
+        generator.nombre.toLowerCase().includes(text.toLowerCase()) ||
+        generator.descripcion.toLowerCase().includes(text.toLowerCase()),
+    );
+    setFilteredGenerators(filtered);
+  };
 
   return (
     <>
@@ -63,11 +80,21 @@ export const GeneratorList = ({onSelect}: any) => {
             <View style={styles.modalContainer}>
               <View style={styles.modalContent}>
                 <Text style={styles.modalTitle}>Select a Generator</Text>
+                <TextInput
+                  keyboardType="default"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  style={styles.searchInput}
+                  placeholder="Buscar generador..."
+                  placeholderTextColor="#c2c2c2"
+                  value={searchText}
+                  onChangeText={setSearchText}
+                />
                 {loading ? (
                   <Text>Loading...</Text>
                 ) : (
                   <FlatList
-                    data={generators}
+                    data={filteredGenerators}
                     keyExtractor={item => item.id}
                     renderItem={({item}) => (
                       <TouchableOpacity
@@ -88,6 +115,8 @@ export const GeneratorList = ({onSelect}: any) => {
                         </View>
                       </TouchableOpacity>
                     )}
+                    contentContainerStyle={styles.flatListContent}
+                    ListFooterComponent={<View style={{height: 20}} />}
                   />
                 )}
               </View>
@@ -108,14 +137,32 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     width: '80%',
+    height: '70%',
     backgroundColor: 'white',
     borderRadius: 10,
     padding: 20,
   },
   modalTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
+    marginBottom: 10,
+    color: '#262626',
+    textAlign: 'center',
+  },
+  searchInput: {
+    color: '#000',
+    width: '100%',
+    backgroundColor: '#f2f2f2',
+    fontSize: 16,
+    height: 40,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 5,
     marginBottom: 20,
+    paddingLeft: 10,
+  },
+  flatListContent: {
+    flexGrow: 1,
   },
   itemContainer: {
     flexDirection: 'row',
@@ -134,6 +181,7 @@ const styles = StyleSheet.create({
   itemTitle: {
     fontSize: 16,
     fontWeight: 'bold',
+    color: '#555555',
   },
   itemDescription: {
     fontSize: 14,

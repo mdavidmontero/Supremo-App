@@ -62,8 +62,16 @@ const StepInputScreen = () => {
 
 const styles = StyleSheet.create({
   container: {flex: 1, backgroundColor: '#ACE3E9'},
-  menuIconContainer: {position: 'absolute', top: 15, left: 13, zIndex: 1},
-  menuIcon: {color: '#fff', fontSize: 18},
+  menuIconContainer: {
+    position: 'absolute',
+    top: 15,
+    left: 13,
+    zIndex: 1,
+  },
+  menuIcon: {
+    color: '#fff',
+    fontSize: 18,
+  },
   topCircle: {
     width: width,
     height: height * 0.3,

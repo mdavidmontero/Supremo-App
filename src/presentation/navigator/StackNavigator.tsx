@@ -8,6 +8,8 @@ import {Vehicle} from '../../domain/entities/vehicle.entity';
 import {TestVehicleScreen} from '../screens/repairs/TestVehicleScreen';
 import StepInputScreen from '../screens/repairs/StepInputScreen';
 import GeneratorDetailScreen from '../components/ui/GeneratorDetails';
+import DetailReportScreen from '../screens/reports/ReportDetailScreen';
+import ListReportsScreen from '../screens/reports/ListReportsScreen';
 
 export type RootStackParamList = {
   navigate: any;
@@ -21,11 +23,14 @@ export type RootStackParamList = {
     generator: string;
     observations: string;
     previousObservations: any[];
+    status: string;
   };
   StepInput: any;
   GeneratorDetail: {
     generator: Generator;
   };
+  DetailReportScreen: undefined;
+  ListReportsScreen: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -47,6 +52,8 @@ export const StackNavigator = () => {
       <Stack.Screen name="Test" component={TestVehicleScreen} />
       <Stack.Screen name="StepInput" component={StepInputScreen} />
       <Stack.Screen name="GeneratorDetail" component={GeneratorDetailScreen} />
+      <Stack.Screen name="ListReportsScreen" component={ListReportsScreen} />
+      <Stack.Screen name="DetailReportScreen" component={DetailReportScreen} />
     </Stack.Navigator>
   );
 };

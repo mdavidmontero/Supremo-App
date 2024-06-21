@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -22,6 +22,7 @@ import {ButtonActions} from '../../components/shared/ButtonActions';
 import {Vehicle} from '../../../domain/entities/vehicle.entity';
 import {RootStackParamList} from '../../navigator/StackNavigator';
 import PreviousObservationsList from '../../components/ui/ListObservations';
+import {Picker} from '@react-native-picker/picker';
 
 const {width, height} = Dimensions.get('window');
 
@@ -43,6 +44,7 @@ export const ReportScreen = ({route, navigation}: ReportScreenProps) => {
   const [loading, setLoading] = useState(false);
   const [datos, setDatos] = useState<any>({});
   const [previousObservations, setPreviousObservations] = useState<any[]>([]);
+  const [status, setStatus] = useState('pending');
 
   const loadData = async () => {
     try {
@@ -89,7 +91,7 @@ export const ReportScreen = ({route, navigation}: ReportScreenProps) => {
               createdAt: firestore.FieldValue.serverTimestamp(),
             },
           ],
-          status: 'pending',
+          status: status,
           createdAt: firestore.FieldValue.serverTimestamp(),
         });
       navigation.navigate('Home');
@@ -155,6 +157,19 @@ export const ReportScreen = ({route, navigation}: ReportScreenProps) => {
                 onChangeText={setObservations}
                 style={styles.input}
               />
+              <Text style={styles.label}>Status: </Text>
+              <View style={styles.pickerContainer}>
+                <Picker
+                  mode="dropdown"
+                  selectedValue={status}
+                  enabled={true}
+                  onValueChange={itemValue => setStatus(itemValue)}
+                  style={styles.picker}>
+                  <Picker.Item label="Pending" value="pending" />
+                  <Picker.Item label="Cancelled" value="cancelled" />
+                  <Picker.Item label="Completed" value="completed" />
+                </Picker>
+              </View>
               <ButtonActions
                 text="Next"
                 onPress={() => {
@@ -163,6 +178,7 @@ export const ReportScreen = ({route, navigation}: ReportScreenProps) => {
                     generator: generator,
                     observations: observations,
                     previousObservations: previousObservations,
+                    status: status,
                   });
                 }}
               />
@@ -260,39 +276,40 @@ const styles = StyleSheet.create({
   input: {
     marginBottom: 20,
   },
+  pickerContainer: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 2,
+    backgroundColor: '#D9D9D9',
+    elevation: 2,
+  },
+  picker: {
+    height: 50,
+    width: '100%',
+    color: '#555',
+    fontSize: 16,
+  },
+
+  image: {
+    width: 150,
+    height: 150,
+    resizeMode: 'contain',
+    marginTop: 10,
+    borderRadius: 20,
+  },
   imagenContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 10,
-  },
-  image: {
-    width: 140,
-    height: 140,
-    borderRadius: 20,
-    resizeMode: 'cover',
-    shadowColor: '#000',
   },
   imgPosition: {
     position: 'absolute',
-    bottom: -30,
-    left: -20,
+    top: -10,
+    right: 0,
   },
   logo: {
     position: 'absolute',
-    top: -10,
-    right: -5,
-    zIndex: 3,
-  },
-  subtitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  observation: {
-    backgroundColor: '#f0f0f0',
-    padding: 10,
-    borderRadius: 5,
-    marginBottom: 5,
+    top: 20,
+    right: 20,
   },
 });
 

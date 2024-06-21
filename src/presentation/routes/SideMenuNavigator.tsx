@@ -75,6 +75,11 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
           label="Generator"
           icon={require('../../assets/Icon_Generator.png')}
         />
+        <ButtonNav
+          nav="ListReportsScreen"
+          label="Reports"
+          icon={require('../../assets/Icon_Generator.png')}
+        />
       </View>
       <DrawerItemList {...props} />
       <View style={styles.footer}>
