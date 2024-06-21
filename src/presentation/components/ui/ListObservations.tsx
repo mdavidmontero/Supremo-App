@@ -54,6 +54,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 10,
     textAlign: 'center',
+    color: '#333',
   },
   scrollContainer: {
     maxHeight: 200,

@@ -10,7 +10,7 @@ import {
   Image,
   ActivityIndicator,
 } from 'react-native';
-import {Button, TextInput} from 'react-native-paper';
+import {TextInput} from 'react-native-paper';
 import firestore from '@react-native-firebase/firestore';
 import {RouteProp} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
@@ -263,11 +263,14 @@ const styles = StyleSheet.create({
   imagenContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 10,
   },
   image: {
-    width: 200,
-    height: 200,
+    width: 140,
+    height: 140,
+    borderRadius: 20,
+    resizeMode: 'cover',
+    shadowColor: '#000',
   },
   imgPosition: {
     position: 'absolute',

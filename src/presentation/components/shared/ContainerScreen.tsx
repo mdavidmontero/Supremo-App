@@ -1,4 +1,4 @@
-import {DrawerActions, useNavigation} from '@react-navigation/native';
+import {DrawerActions, useNavigation, useRoute} from '@react-navigation/native';
 import React from 'react';
 import {
   Dimensions,
@@ -6,6 +6,7 @@ import {
   StyleSheet,
   View,
   SafeAreaView,
+  Text,
 } from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -25,16 +26,31 @@ export const ContainerScreen: React.FC<ContainerScreenProps> = ({
   text,
 }) => {
   const navigation = useNavigation();
+  const route = useRoute();
+
+  // Función para manejar la navegación al menú
+  const toggleDrawer = () => {
+    navigation.dispatch(DrawerActions.toggleDrawer());
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         <Logo style={styles.logo} />
         <ImagenPosition style={styles.imgPosition} />
-        <Pressable
-          style={styles.menuIconContainer}
-          onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}>
-          <Icon name="menu-outline" size={30} color="#fff" />
-        </Pressable>
+
+        {route.name === 'GeneratorDetail' ? (
+          <Pressable
+            style={styles.menuIconContainer}
+            onPress={() => navigation.goBack()}>
+            <Icon name="arrow-back-circle-outline" size={30} color="#fff" />
+          </Pressable>
+        ) : (
+          <Pressable style={styles.menuIconContainer} onPress={toggleDrawer}>
+            <Icon name="menu-outline" size={30} color="#fff" />
+          </Pressable>
+        )}
+
         <View style={styles.topCircle}>
           <Title text={text} />
         </View>
@@ -108,6 +124,28 @@ const styles = StyleSheet.create({
     top: -10,
     right: -5,
     zIndex: 3,
+  },
+  customPressable: {
+    backgroundColor: 'blue',
+    padding: 10,
+    margin: 20,
+    borderRadius: 5,
+  },
+  customPressableText: {
+    color: '#fff',
+    fontSize: 16,
+    textAlign: 'center',
+  },
+  anotherPressable: {
+    backgroundColor: 'green',
+    padding: 10,
+    margin: 20,
+    borderRadius: 5,
+  },
+  anotherPressableText: {
+    color: '#fff',
+    fontSize: 16,
+    textAlign: 'center',
   },
 });
 
