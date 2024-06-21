@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Dimensions,
   Pressable,
@@ -6,27 +6,40 @@ import {
   StyleSheet,
   Text,
   View,
+  ScrollView,
 } from 'react-native';
-import {useNavigation, useRoute} from '@react-navigation/native';
+import {RouteProp, useRoute} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Logo} from '../../components/shared/Logo';
 import {ImagenPosition} from '../../components/ui/ImagenPosition';
 import {Title} from '../../components/shared/Title';
 import {Arrow, Arrow2} from '../../components/shared/Arrow';
 import {StepButton} from '../../components/shared/StepButton';
-import firestore from '@react-native-firebase/firestore';
-import {globalStyles} from '../../../config/theme/theme';
 import {Button} from 'react-native-paper';
+import {globalStyles} from '../../../config/theme/theme';
+import {StackScreenProps} from '@react-navigation/stack';
+import {RootStackParamList} from '../../navigator/StackNavigator';
+import firestore from '@react-native-firebase/firestore';
+import {StepData} from '../../../infrastructure/interfaces/reports-db.responses';
+import {mapToReport} from '../../../infrastructure/mappers/reports-vehicle.mapper';
+import {saveReport} from '../../../actions/get-reports-vehicle';
+import {Report} from '../../../domain/entities/reports.entity';
+
+interface Props extends StackScreenProps<RootStackParamList, 'Test'> {}
+type TestScreenRouteProp = RouteProp<RootStackParamList, 'Test'>;
 
 const {width, height} = Dimensions.get('window');
-
-export const TestVehicleScreen = () => {
-  const route = useRoute();
-  const navigation = useNavigation();
+export const TestVehicleScreen = ({navigation}: Props) => {
+  const route = useRoute<TestScreenRouteProp>();
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [stepData, setStepData] = useState({step1: '', step2: '', step3: ''});
-  const {vehicles, generator, observations} = route.params;
+  const [stepData, setStepData] = useState<StepData>({
+    step1: '',
+    step2: '',
+    step3: '',
+  });
+  const {vehicles, generator, observations, previousObservations} =
+    route.params;
 
   const handlePress = (step: number) => {
     navigation.navigate('StepInput', {
@@ -39,23 +52,66 @@ export const TestVehicleScreen = () => {
       },
     });
   };
-  console.log(stepData);
-  console.log(vehicles, generator, observations);
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Pressable onPress={handleSave}>
+          <Text style={{marginRight: 10}}>Save</Text>
+        </Pressable>
+      ),
+    });
+  }, []);
 
   const handleSave = async () => {
     setLoading(true);
     try {
-      await firestore().collection('reports').add({
-        vin: vehicles.vin,
-        vehicleId: vehicles.id,
-        generatorId: generator,
+      const reportData = mapToReport(
+        vehicles,
+        generator,
         observations,
-        status: 'pending',
-        step1: stepData.step1,
-        step2: stepData.step2,
-        step3: stepData.step3,
-        createdAt: firestore.FieldValue.serverTimestamp(),
-      });
+        stepData,
+      );
+      const existingReport = previousObservations.find(
+        report => report.status === 'pending',
+      );
+      if (existingReport) {
+        await updateReport(existingReport.id, reportData);
+      } else {
+        await createNewReport(reportData);
+      }
+    } catch (error) {
+      throw new Error('Error saving report');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateReport = async (reportId: string, reportData: Report) => {
+    try {
+      await firestore()
+        .collection('reports')
+        .doc(reportId)
+        .update({
+          observations: firestore.FieldValue.arrayUnion({
+            text: observations,
+            createdAt: new Date(),
+          }),
+          step1: stepData.step1,
+          step2: stepData.step2,
+          step3: stepData.step3,
+        });
+      navigation.navigate('Home');
+    } catch (error) {
+      console.error('Error updating report: ', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const createNewReport = async (reportData: Report) => {
+    try {
+      await saveReport(reportData);
       navigation.navigate('Home');
     } catch (error) {
       console.error('Error saving report: ', error);
@@ -76,42 +132,44 @@ export const TestVehicleScreen = () => {
       <View style={styles.topCircle}>
         <Title text="Test Vehicle" />
       </View>
-      <View style={styles.containerForm}>
-        <Text style={styles.title}>Tests</Text>
-        <StepButton
-          stepNumber="1"
-          stepText="First Step"
-          onPress={() => handlePress(1)}
-          disabled={currentStep !== 1}
-        />
-        <View style={styles.stepsArrow}>
-          <Arrow />
+      <ScrollView style={styles.contentContainer}>
+        <View style={styles.containerForm}>
+          <Text style={styles.title}>Tests</Text>
+          <StepButton
+            stepNumber="1"
+            stepText="First Step"
+            onPress={() => handlePress(1)}
+            disabled={currentStep !== 1}
+          />
+          <View style={styles.stepsArrow}>
+            <Arrow />
+          </View>
+          <StepButton
+            stepNumber="2"
+            stepText="Second Step"
+            onPress={() => handlePress(2)}
+            disabled={currentStep !== 2}
+          />
+          <View style={styles.stepsArrow2}>
+            <Arrow2 />
+          </View>
+          <StepButton
+            stepNumber="3"
+            stepText="Third Step"
+            onPress={() => handlePress(3)}
+            disabled={currentStep !== 3}
+          />
+          <View style={styles.btnseparated}>
+            <Button
+              mode="contained"
+              style={globalStyles.buttonSucces}
+              onPress={handleSave}
+              loading={loading}>
+              Save Report
+            </Button>
+          </View>
         </View>
-        <StepButton
-          stepNumber="2"
-          stepText="Second Step"
-          onPress={() => handlePress(2)}
-          disabled={currentStep !== 2}
-        />
-        <View style={styles.stepsArrow2}>
-          <Arrow2 />
-        </View>
-        <StepButton
-          stepNumber="3"
-          stepText="Third Step"
-          onPress={() => handlePress(3)}
-          disabled={currentStep !== 3}
-        />
-        <View style={styles.btnseparated}>
-          <Button
-            mode="contained"
-            style={globalStyles.buttonSucces}
-            onPress={handleSave}
-            loading={loading}>
-            Save Report
-          </Button>
-        </View>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -141,6 +199,9 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
   },
+  contentContainer: {
+    marginTop: -height * 0.15,
+  },
   containerForm: {
     flex: 1,
     backgroundColor: '#B2EBF2',
@@ -156,7 +217,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#00ACC1',
     borderStyle: 'solid',
-    top: -120,
   },
   title: {
     fontSize: 24,
@@ -197,3 +257,5 @@ const styles = StyleSheet.create({
     marginTop: 15,
   },
 });
+
+export default TestVehicleScreen;

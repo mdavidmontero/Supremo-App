@@ -15,10 +15,15 @@ import {Title} from '../../components/shared/Title';
 
 const {width, height} = Dimensions.get('window');
 
+interface StepScreenParams {
+  step: number;
+  onStepComplete: (data: string) => void;
+}
+
 const StepInputScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  const {step, onStepComplete} = route.params;
+  const {step, onStepComplete} = route.params as StepScreenParams;
   const [code, setCode] = useState('');
 
   const handleRegister = () => {
@@ -119,9 +124,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: 60,
     alignItems: 'center',
   },
-  btnRegisterText: {color: '#FFF', fontWeight: 'bold', fontSize: 18},
-  imgPosition: {position: 'absolute', bottom: -30, left: -20},
-  logo: {position: 'absolute', top: -10, right: -5, zIndex: 3},
+  btnRegisterText: {
+    color: '#FFF',
+    fontWeight: 'bold',
+    fontSize: 18,
+  },
+  imgPosition: {
+    position: 'absolute',
+    bottom: -30,
+    left: -20,
+  },
+  logo: {
+    position: 'absolute',
+    top: -10,
+    right: -5,
+    zIndex: 3,
+  },
 });
 
 export default StepInputScreen;

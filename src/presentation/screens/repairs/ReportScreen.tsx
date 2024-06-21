@@ -1,17 +1,17 @@
-import React, {useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {
   View,
   Text,
   StyleSheet,
-  Image,
   SafeAreaView,
-  Pressable,
   ScrollView,
   Dimensions,
+  Pressable,
+  Image,
+  ActivityIndicator,
 } from 'react-native';
 import {Button, TextInput} from 'react-native-paper';
 import firestore from '@react-native-firebase/firestore';
-import {RootStackParamList} from '../../navigator/StackNavigator';
 import {RouteProp} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -20,6 +20,8 @@ import {ImagenPosition} from '../../components/ui/ImagenPosition';
 import {Title} from '../../components/shared/Title';
 import {ButtonActions} from '../../components/shared/ButtonActions';
 import {Vehicle} from '../../../domain/entities/vehicle.entity';
+import {RootStackParamList} from '../../navigator/StackNavigator';
+import PreviousObservationsList from '../../components/ui/ListObservations';
 
 const {width, height} = Dimensions.get('window');
 
@@ -35,15 +37,12 @@ type ReportScreenProps = {
   navigation: ReportScreenNavigationProp;
 };
 
-export const ReportScreen: React.FC<ReportScreenProps> = ({
-  route,
-  navigation,
-}) => {
+export const ReportScreen = ({route, navigation}: ReportScreenProps) => {
   const {vehicle, generator} = route.params;
   const [observations, setObservations] = useState('');
   const [loading, setLoading] = useState(false);
-  const [datos, setDatos] = React.useState<any>([]);
-  const [vehicles, setVehicle] = useState<Vehicle>(vehicle);
+  const [datos, setDatos] = useState<any>({});
+  const [previousObservations, setPreviousObservations] = useState<any[]>([]);
 
   const loadData = async () => {
     try {
@@ -53,14 +52,24 @@ export const ReportScreen: React.FC<ReportScreenProps> = ({
         .get();
       if (generatorDoc.exists) {
         setDatos(generatorDoc.data());
-        console.log(generatorDoc.data());
       } else {
         console.log('No such document!');
       }
+
+      const reportsQuerySnapshot = await firestore()
+        .collection('reports')
+        .where('vin', '==', vehicle.vin)
+        .get();
+      const reports = reportsQuerySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setPreviousObservations(reports);
     } catch (error) {
-      console.log(error);
+      console.log('Error loading data:', error);
     }
   };
+
   useEffect(() => {
     loadData();
   }, []);
@@ -68,14 +77,21 @@ export const ReportScreen: React.FC<ReportScreenProps> = ({
   const handleSave = async () => {
     setLoading(true);
     try {
-      await firestore().collection('reports').add({
-        vin: vehicle.vin,
-        vehicleId: vehicle.id,
-        generatorId: generator,
-        observations,
-        status: 'pending',
-        createdAt: firestore.FieldValue.serverTimestamp(),
-      });
+      await firestore()
+        .collection('reports')
+        .add({
+          vin: vehicle.vin,
+          vehicleId: vehicle.id,
+          generatorId: generator,
+          observations: [
+            {
+              text: observations,
+              createdAt: firestore.FieldValue.serverTimestamp(),
+            },
+          ],
+          status: 'pending',
+          createdAt: firestore.FieldValue.serverTimestamp(),
+        });
       navigation.navigate('Home');
     } catch (error) {
       console.error('Error saving report: ', error);
@@ -122,8 +138,14 @@ export const ReportScreen: React.FC<ReportScreenProps> = ({
                 <Text style={styles.value}>{datos.descripcion}</Text>
               </View>
               <View style={styles.imagenContainer}>
-                <Image style={styles.image} source={{uri: datos.imagen}} />
+                {datos.imagen ? (
+                  <Image style={styles.image} source={{uri: datos.imagen}} />
+                ) : (
+                  <ActivityIndicator size="large" color="#0000ff" />
+                )}
               </View>
+
+              <PreviousObservationsList observations={previousObservations} />
               <TextInput
                 mode="outlined"
                 label="Observations"
@@ -133,21 +155,14 @@ export const ReportScreen: React.FC<ReportScreenProps> = ({
                 onChangeText={setObservations}
                 style={styles.input}
               />
-              {/* <Button
-                mode="contained"
-                style={globalStyles.buttonSucces}
-                onPress={handleSave}
-                loading={loading}>
-                Save Report
-              </Button> */}
-
               <ButtonActions
                 text="Next"
                 onPress={() => {
                   navigation.navigate('Test', {
-                    vehicles: vehicles,
+                    vehicles: vehicle,
                     generator: generator,
                     observations: observations,
+                    previousObservations: previousObservations,
                   });
                 }}
               />
@@ -156,9 +171,6 @@ export const ReportScreen: React.FC<ReportScreenProps> = ({
         </View>
       </View>
     </SafeAreaView>
-    // <ScrollView style={styles.container}>
-
-    // </ScrollView>
   );
 };
 
@@ -268,4 +280,17 @@ const styles = StyleSheet.create({
     right: -5,
     zIndex: 3,
   },
+  subtitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  observation: {
+    backgroundColor: '#f0f0f0',
+    padding: 10,
+    borderRadius: 5,
+    marginBottom: 5,
+  },
 });
+
+export default ReportScreen;

@@ -19,8 +19,9 @@ export type RootStackParamList = {
     vehicles: Vehicle;
     generator: string;
     observations: string;
+    previousObservations: any[];
   };
-  StepInput: {step: string; onStepComplete: () => void};
+  StepInput: any;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();

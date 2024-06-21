@@ -84,10 +84,10 @@ export const HomeScreen = () => {
         <Text style={styles.label}>Vin: </Text>
         <Text style={styles.cardTitle}>{item.vin}</Text>
       </View>
-      <View style={styles.row}>
+      {/* <View style={styles.row}>
         <Text style={styles.label}>Observations: </Text>
         <Text style={styles.value}>{item.observations}</Text>
-      </View>
+      </View> */}
       <View style={styles.row}>
         <Text style={styles.label}>Status: </Text>
         <Text style={styles.value}>{item.status}</Text>
