@@ -97,9 +97,13 @@ export const RepairsScreen = () => {
           />
         )}
         <GeneratorList onSelect={setSelectedGeneratorId} />
-        {selectedGeneratorId && (
+        {selectedGeneratorId ? (
           <Text style={styles.selectedText}>
-            Selected Generator ID: {selectedGeneratorId}
+            Generador Seleccionado: {selectedGeneratorId}
+          </Text>
+        ) : (
+          <Text style={styles.selectedText}>
+            No ha seleccionado un Generador
           </Text>
         )}
         <Button
@@ -140,8 +144,9 @@ const styles = StyleSheet.create({
     marginTop: 100,
   },
   selectedText: {
-    marginTop: 20,
     fontSize: 18,
-    color: 'green',
+    color: '#00ACC1',
+    marginBottom: 10,
+    textAlign: 'center',
   },
 });

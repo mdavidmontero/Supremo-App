@@ -86,7 +86,7 @@ export const GeneratorList = ({onSelect}: any) => {
                   autoCorrect={false}
                   style={styles.searchInput}
                   placeholder="Buscar generador..."
-                  placeholderTextColor="#c2c2c2"
+                  placeholderTextColor="#FFF"
                   value={searchText}
                   onChangeText={setSearchText}
                 />
@@ -150,13 +150,14 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   searchInput: {
-    color: '#000',
+    color: '#FFF',
     width: '100%',
-    backgroundColor: '#f2f2f2',
-    fontSize: 16,
+    fontWeight: 'bold',
+    backgroundColor: '#00ACC1',
+    fontSize: 17,
     height: 40,
-    borderColor: '#ccc',
-    borderWidth: 1,
+    borderColor: '#00ACC1',
+    borderWidth: 3,
     borderRadius: 5,
     marginBottom: 20,
     paddingLeft: 10,

@@ -105,10 +105,10 @@ const styles = StyleSheet.create({
   safeContainer: {
     flex: 1,
     backgroundColor: '#B2EBF2',
+    borderRadius: 20,
   },
   container: {
     flex: 1,
-    backgroundColor: '#B2EBF2',
     alignItems: 'center',
     padding: 20,
     borderRadius: 10,

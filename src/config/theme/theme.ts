@@ -31,12 +31,14 @@ export const globalStyles = StyleSheet.create({
     fontSize: 18,
   },
   menuIconContainer: {
-    position: 'absolute', // Ajusta el contenedor en la esquina izquierda
+    position: 'absolute',
     top: 15,
     left: 13,
-    zIndex: 1, // Ajusta el orden de renderizado
+    zIndex: 1,
   },
   buttonSucces: {
     backgroundColor: '#00ACC1',
+    fontWeight: 'bold',
+    marginBottom: 5,
   },
 });

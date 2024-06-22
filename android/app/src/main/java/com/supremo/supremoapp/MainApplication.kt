@@ -1,4 +1,4 @@
-package com.supremoapp
+package com.supremo.supremoapp
 
 import android.app.Application
 import com.facebook.react.PackageList

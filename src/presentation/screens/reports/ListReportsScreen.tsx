@@ -83,8 +83,6 @@ export const ListReportsScreen: FC = () => {
     fetchReports();
   }, []);
 
-  console.log(reports);
-
   const handleReportPress = (report: Report) => {
     navigation.navigate('DetailReportScreen', {report});
   };
@@ -96,8 +94,11 @@ export const ListReportsScreen: FC = () => {
       {item.generator && (
         <FadeInImage uri={item.generator.imagen} style={styles.image} />
       )}
-      <Text style={styles.title}>{item.vin}</Text>
-      <Text style={styles.subtitle}>{item.status}</Text>
+      <Text style={styles.title}>VIN:{item.vin}</Text>
+      <Text style={styles.subtitle}>Estado: {item.status}</Text>
+      <Text style={styles.subtitle}>
+        Observation: {item.observations[0].text}
+      </Text>
     </TouchableOpacity>
   );
 
@@ -107,15 +108,11 @@ export const ListReportsScreen: FC = () => {
       report.vin.toLowerCase().includes(search.toLowerCase()),
   );
 
-  if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <Text>
-          <ActivityIndicator size="large" color="#00ACC1" />{' '}
-        </Text>
-      </View>
-    );
-  }
+  // if (loading) {
+  //   return (
+
+  //   );
+  // }
 
   return (
     <View style={styles.container}>
@@ -161,6 +158,13 @@ export const ListReportsScreen: FC = () => {
           value={search}
           onChangeText={setSearch}
         />
+        {loading && (
+          <View style={styles.loadingContainer}>
+            <Text>
+              <ActivityIndicator size="large" color="#00ACC1" />{' '}
+            </Text>
+          </View>
+        )}
         <View style={styles.columnContainer}>
           <FlatList
             data={filteredReports}
@@ -185,7 +189,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   loadingContainer: {
-    flex: 1,
+    display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -194,11 +198,12 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: '#B2EBF2',
     padding: 10,
-    borderRadius: 10,
+    borderRadius: 20,
     marginVertical: 5,
-    shadowColor: '#000',
+    borderColor: '#00ACC1',
+    borderWidth: 0.8,
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
@@ -208,14 +213,14 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 5,
-    color: '#000',
+    color: '#00ACC1',
   },
   subtitle: {
     fontSize: 16,
     color: '#666',
   },
   image: {
-    width: '100%',
+    width: '60%',
     height: 150,
     borderRadius: 10,
     marginBottom: 10,
@@ -242,8 +247,8 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     height: 40,
-    borderColor: '#ccc',
-    borderWidth: 1,
+    borderColor: '#00ACC1',
+    borderWidth: 2,
     borderRadius: 5,
     margin: 10,
     paddingLeft: 10,
