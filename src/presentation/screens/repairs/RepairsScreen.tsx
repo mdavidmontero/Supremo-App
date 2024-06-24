@@ -1,81 +1,57 @@
-import React, {useEffect, useState} from 'react';
-import {StyleSheet, Text} from 'react-native';
-import {
-  ActivityIndicator,
-  Button,
-  TextInput,
-  useTheme,
-} from 'react-native-paper';
-import Icon from 'react-native-vector-icons/Ionicons';
-import {getVehicleByVin} from '../../../actions/get-vehicle-by-vin';
-import {Vehicle} from '../../../domain/entities/vehicle.entity';
+import React, {useState} from 'react';
+import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
+import {ActivityIndicator, Button, useTheme} from 'react-native-paper';
 import {DetailsVehicle} from '../../components/ui/DetailsVehicle';
 import {useNavigation} from '@react-navigation/native';
 import {GeneratorList} from '../../components/ui/GeneratorList';
 import {globalStyles} from '../../../config/theme/theme';
 import {RootStackParamList} from '../../navigator/StackNavigator';
 import ContainerScreen from '../../components/shared/ContainerScreen';
+import {CodeScanner} from './ScannerCode';
+import {ModalFormVehicle} from '../../components/ui/vehicle/RegisterVehicle';
+import {decodedScanner} from '../../../types';
 
 export const RepairsScreen = () => {
-  const [vim, setVim] = useState('');
-  const [selectedGeneratorId, setSelectedGeneratorId] = useState(null);
-  const [data, setData] = useState<Vehicle | null>(null);
+  const [selectedGeneratorId, setSelectedGeneratorId] = useState<string | null>(
+    null,
+  );
   const [loading, setLoading] = useState(false);
+  const [scannedData, setScannedData] = useState<decodedScanner>({
+    cedula: '',
+    nombreCompleto: '',
+    placa: '',
+    vin: '',
+    modelo: '',
+  });
+  const [modalVisible, setModalVisible] = useState(false);
   const navigation = useNavigation<RootStackParamList>();
-  const handleSearch = (text: string) => {
-    setVim(text);
-  };
   const {colors} = useTheme();
-
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!vim) {
-        setData(null);
-        return;
-      }
-      setLoading(true);
-      try {
-        const vehicle = await getVehicleByVin(vim);
-        setData(vehicle);
-      } catch (error) {
-        console.error('Error fetching vehicle:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [vim]);
+  const [showScanner, setShowScanner] = useState(false);
 
   const handleProceed = () => {
-    if (data && selectedGeneratorId) {
+    if (scannedData && selectedGeneratorId) {
       navigation.navigate('ReportScreen', {
-        vehicle: data,
+        vehicle: scannedData,
         generator: selectedGeneratorId,
       }) as any;
     }
+  };
+  console.log(scannedData);
+
+  const handleDataScanned = (scannedData: decodedScanner) => {
+    setScannedData(scannedData);
+    setShowScanner(false);
+  };
+
+  const handleModalSubmit = () => {
+    setModalVisible(false);
   };
 
   return (
     <>
       <ContainerScreen text="Repairs">
-        <Text style={styles.text}>Escriba el VIM del Vehiculo</Text>
-        <TextInput
-          mode="outlined"
-          style={styles.input}
-          autoCorrect={false}
-          autoFocus
-          placeholder="Numero VIM"
-          theme={{colors: {primary: '#00ACC1'}}}
-          left={
-            <TextInput.Icon
-              icon={() => <Icon name="search-outline" size={20} color="#000" />}
-            />
-          }
-          editable={true}
-          value={vim}
-          onChangeText={handleSearch}
-        />
+        <Text style={styles.text}>Datos del Vehiculo</Text>
+
         {loading && (
           <ActivityIndicator
             style={{
@@ -86,17 +62,19 @@ export const RepairsScreen = () => {
             }}
           />
         )}
-        {data && (
+
+        {scannedData.cedula && (
           <DetailsVehicle
-            color={data?.color}
-            model={data?.model}
-            plate={data?.licensePlate}
-            vim={data?.vin}
-            year={data?.year}
-            isVisible={!!data && !loading}
+            cedula={scannedData?.cedula}
+            nombre={scannedData?.nombreCompleto}
+            plate={scannedData?.placa}
+            vin={scannedData?.vin}
+            isVisible={!!scannedData && !loading}
           />
         )}
+
         <GeneratorList onSelect={setSelectedGeneratorId} />
+
         {selectedGeneratorId ? (
           <Text style={styles.selectedText}>
             Generador Seleccionado: {selectedGeneratorId}
@@ -106,33 +84,44 @@ export const RepairsScreen = () => {
             No ha seleccionado un Generador
           </Text>
         )}
+
         <Button
           style={globalStyles.buttonSucces}
           mode="contained"
           onPress={handleProceed}
-          disabled={
-            !data ||
-            !(
-              <Button
-                mode="contained"
-                onPress={handleProceed}
-                disabled={!data || !selectedGeneratorId}>
-                Proceed to Report
-              </Button>
-            )
-          }>
+          disabled={!scannedData || !selectedGeneratorId}>
           Proceed to Report
         </Button>
+
+        <TouchableOpacity
+          style={styles.scanButton}
+          onPress={() => setShowScanner(true)}>
+          <Text style={styles.scanButtonText}>Abrir Escaner</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.scanButton}
+          onPress={() => setModalVisible(true)}>
+          <Text style={styles.scanButtonText}>Ingresar Manualmente</Text>
+        </TouchableOpacity>
+        <ModalFormVehicle
+          handleModalSubmit={handleModalSubmit}
+          modalVisible={modalVisible}
+          setModalVisible={setModalVisible}
+          manualInput={scannedData}
+          setManualInput={setScannedData}
+        />
+
+        {showScanner && (
+          <View style={StyleSheet.absoluteFill}>
+            <CodeScanner onDataScanned={handleDataScanned} />
+          </View>
+        )}
       </ContainerScreen>
     </>
   );
 };
 
 const styles = StyleSheet.create({
-  input: {
-    marginBottom: 15,
-    backgroundColor: '#fff',
-  },
   text: {
     color: 'black',
     fontSize: 20,
@@ -140,13 +129,22 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: '700',
   },
-  generatorListContainer: {
-    marginTop: 100,
-  },
   selectedText: {
     fontSize: 18,
     color: '#00ACC1',
     marginBottom: 10,
     textAlign: 'center',
+  },
+  scanButton: {
+    backgroundColor: '#00ACC1',
+    padding: 15,
+    borderRadius: 5,
+    marginTop: 20,
+    alignItems: 'center',
+  },
+  scanButtonText: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });

@@ -22,8 +22,9 @@ import {RootStackParamList} from '../../navigator/StackNavigator';
 import firestore from '@react-native-firebase/firestore';
 import {StepData} from '../../../infrastructure/interfaces/reports-db.responses';
 import {mapToReport} from '../../../infrastructure/mappers/reports-vehicle.mapper';
-import {saveReport} from '../../../actions/get-reports-vehicle';
 import {Report} from '../../../domain/entities/reports.entity';
+import {saveVehicle} from '../../../actions/save-vehicle';
+import {Vehicle} from '../../../types';
 
 interface Props extends StackScreenProps<RootStackParamList, 'Test'> {}
 type TestScreenRouteProp = RouteProp<RootStackParamList, 'Test'>;
@@ -78,7 +79,7 @@ export const TestVehicleScreen = ({navigation}: Props) => {
       if (existingReport) {
         await updateReport(existingReport.id, reportData);
       } else {
-        await createNewReport(reportData);
+        await createNewReport(reportData, vehicles);
       }
     } catch (error) {
       throw new Error('Error saving report');
@@ -110,14 +111,22 @@ export const TestVehicleScreen = ({navigation}: Props) => {
     }
   };
 
-  const createNewReport = async (reportData: Report) => {
+  const createNewReport = async (report: Report, vehicle: Vehicle) => {
     try {
-      await saveReport(reportData);
+      const vin = await saveVehicle(vehicle);
+
+      const reportData = {
+        ...report,
+        vin,
+        createdAt: new Date(),
+      };
+
+      const docRef = await firestore().collection('reports').add(reportData);
       navigation.navigate('Home');
+      return docRef.id;
     } catch (error) {
       console.error('Error saving report: ', error);
-    } finally {
-      setLoading(false);
+      throw error;
     }
   };
 

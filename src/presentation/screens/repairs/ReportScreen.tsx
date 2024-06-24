@@ -41,7 +41,6 @@ type ReportScreenProps = {
 export const ReportScreen = ({route, navigation}: ReportScreenProps) => {
   const {vehicle, generator} = route.params;
   const [observations, setObservations] = useState('');
-  const [loading, setLoading] = useState(false);
   const [datos, setDatos] = useState<any>({});
   const [previousObservations, setPreviousObservations] = useState<any[]>([]);
   const [status, setStatus] = useState('pending');
@@ -76,32 +75,6 @@ export const ReportScreen = ({route, navigation}: ReportScreenProps) => {
     loadData();
   }, []);
 
-  const handleSave = async () => {
-    setLoading(true);
-    try {
-      await firestore()
-        .collection('reports')
-        .add({
-          vin: vehicle.vin,
-          vehicleId: vehicle.id,
-          generatorId: generator,
-          observations: [
-            {
-              text: observations,
-              createdAt: firestore.FieldValue.serverTimestamp(),
-            },
-          ],
-          status: status,
-          createdAt: firestore.FieldValue.serverTimestamp(),
-        });
-      navigation.navigate('Home');
-    } catch (error) {
-      console.error('Error saving report: ', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
@@ -120,16 +93,20 @@ export const ReportScreen = ({route, navigation}: ReportScreenProps) => {
             <View style={styles.containerForm}>
               <Text style={styles.title}>Vehicle Report</Text>
               <View style={styles.row}>
+                <Text style={styles.label}>Nombre: </Text>
+                <Text style={styles.value}>{vehicle.nombreCompleto}</Text>
+              </View>
+              <View style={styles.row}>
                 <Text style={styles.label}>Vehicle VIN: </Text>
                 <Text style={styles.value}>{vehicle.vin}</Text>
               </View>
               <View style={styles.row}>
                 <Text style={styles.label}>Vehicle Model: </Text>
-                <Text style={styles.value}>{vehicle.model}</Text>
+                <Text style={styles.value}>{vehicle.modelo}</Text>
               </View>
               <View style={styles.row}>
                 <Text style={styles.label}>Vehicle Plate: </Text>
-                <Text style={styles.value}>{vehicle.licensePlate}</Text>
+                <Text style={styles.value}>{vehicle.placa}</Text>
               </View>
               <View style={styles.row}>
                 <Text style={styles.label}>Generator Name: </Text>
