@@ -1,7 +1,6 @@
 export interface Vehicle {
   cedula: string;
   nombreCompleto: string;
-  model: string;
   placa: string;
   vin: string;
   modelo: string;
