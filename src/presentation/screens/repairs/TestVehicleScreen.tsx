@@ -78,11 +78,6 @@ export const TestVehicleScreen = ({navigation}: Props) => {
     });
   };
 
-  const existingReport = previousObservations.find(
-    report => report.vin === reportIds.vin,
-  );
-
-  console.log('existendo data:', existingReport.id);
   const handleSave = async () => {
     setLoading(true);
     try {

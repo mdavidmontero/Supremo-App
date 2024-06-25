@@ -138,7 +138,18 @@ export const HomeScreen = () => {
         </View>
         <View>
           {loading && <ActivityIndicator size="large" color="#00ACC1" />}
+          {reports.length === 0 && (
+            <Text
+              style={{
+                fontSize: 20,
+                fontWeight: 'bold',
+                textAlign: 'center',
+              }}>
+              No hay reportes{' '}
+            </Text>
+          )}
         </View>
+
         <View style={styles.listContainer}>
           {loading ? (
             <ActivityIndicator size="large" color="#00ACC1" />
