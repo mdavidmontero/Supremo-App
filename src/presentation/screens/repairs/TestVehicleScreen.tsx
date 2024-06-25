@@ -25,6 +25,7 @@ import {mapToReport} from '../../../infrastructure/mappers/reports-vehicle.mappe
 import {Report} from '../../../domain/entities/reports.entity';
 import {saveVehicle} from '../../../actions/save-vehicle';
 import {Vehicle} from '../../../types';
+import {getReport} from '../../../actions/get-reports-vehicle';
 
 interface Props extends StackScreenProps<RootStackParamList, 'Test'> {}
 type TestScreenRouteProp = RouteProp<RootStackParamList, 'Test'>;
@@ -39,18 +40,19 @@ export const TestVehicleScreen = ({navigation}: Props) => {
     step2: '',
     step3: '',
   });
+  const [reportIds, setReportIds] = useState<Report>({} as Report);
   const {vehicles, generator, observations, previousObservations, status} =
     route.params;
 
-  const handlePress = (step: number) => {
-    navigation.navigate('StepInput', {
-      step,
-      onStepComplete: (data: string) => {
-        setStepData(prevData => ({...prevData, [`step${step}`]: data}));
-        if (step < 3) {
-          setCurrentStep(step + 1);
-        }
-      },
+  const reportId = previousObservations.map(report => report.id);
+
+  useEffect(() => {
+    loadReport();
+  }, []);
+
+  const loadReport = () => {
+    getReport(reportId[0]).then(report => {
+      setReportIds(report);
     });
   };
 
@@ -64,6 +66,23 @@ export const TestVehicleScreen = ({navigation}: Props) => {
     });
   }, []);
 
+  const handlePress = (step: number) => {
+    navigation.navigate('StepInput', {
+      step,
+      onStepComplete: (data: string) => {
+        setStepData(prevData => ({...prevData, [`step${step}`]: data}));
+        if (step < 3) {
+          setCurrentStep(step + 1);
+        }
+      },
+    });
+  };
+
+  const existingReport = previousObservations.find(
+    report => report.vin === reportIds.vin,
+  );
+
+  console.log('existendo data:', existingReport.id);
   const handleSave = async () => {
     setLoading(true);
     try {
@@ -74,8 +93,9 @@ export const TestVehicleScreen = ({navigation}: Props) => {
         stepData,
       );
       const existingReport = previousObservations.find(
-        report => report.status === 'pending',
+        report => report.vin === reportIds.vin,
       );
+
       if (existingReport) {
         await updateReport(existingReport.id, reportData);
       } else {

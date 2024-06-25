@@ -11,3 +11,17 @@ export const saveReport = async (report: Report) => {
     throw error;
   }
 };
+
+export const getReport = async (reportId: string) => {
+  try {
+    const doc = await firestore().collection('reports').doc(reportId).get();
+    if (doc.exists) {
+      return doc.data() as Report;
+    } else {
+      throw new Error(`Report with id ${reportId} not found`);
+    }
+  } catch (error) {
+    console.error('Error getting report: ', error);
+    throw error;
+  }
+};
