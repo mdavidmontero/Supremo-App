@@ -35,7 +35,7 @@ export const HomeScreen = () => {
   const [loading, setLoading] = useState(false);
   const [lastDoc, setLastDoc] = useState<any>(null);
   const [fetchingMore, setFetchingMore] = useState(false);
-  const [refreshing, setRefreshing] = useState(false); // Nuevo estado para el refresco
+  const [refreshing, setRefreshing] = useState(false);
 
   const loadData = async () => {
     setLoading(true);
@@ -135,6 +135,9 @@ export const HomeScreen = () => {
         <View style={styles.topCircle}>
           <Title text="News" />
           <Text style={styles.subtitle}>Latest reports</Text>
+        </View>
+        <View>
+          {loading && <ActivityIndicator size="large" color="#00ACC1" />}
         </View>
         <View style={styles.listContainer}>
           {loading ? (

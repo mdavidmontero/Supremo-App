@@ -11,7 +11,7 @@ export const App = () => {
     setTimeout(() => {
       SplashScreen.hide();
       setShowSplash(false);
-    }, 3000);
+    }, 2000);
   }, []);
   if (showSplash) {
     return <SplashScreens />;

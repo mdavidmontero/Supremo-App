@@ -68,6 +68,7 @@ export const RepairsScreen = () => {
             cedula={scannedData?.cedula}
             nombre={scannedData?.nombreCompleto}
             plate={scannedData?.placa}
+            modelo={scannedData?.modelo}
             vin={scannedData?.vin}
             isVisible={!!scannedData && !loading}
           />
@@ -89,7 +90,7 @@ export const RepairsScreen = () => {
           style={globalStyles.buttonSucces}
           mode="contained"
           onPress={handleProceed}
-          disabled={!scannedData || !selectedGeneratorId}>
+          disabled={!scannedData.cedula || !selectedGeneratorId}>
           Proceed to Report
         </Button>
 
@@ -113,7 +114,10 @@ export const RepairsScreen = () => {
 
         {showScanner && (
           <View style={StyleSheet.absoluteFill}>
-            <CodeScanner onDataScanned={handleDataScanned} />
+            <CodeScanner
+              onDataScanned={handleDataScanned}
+              setShowScanner={setShowScanner}
+            />
           </View>
         )}
       </ContainerScreen>

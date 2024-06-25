@@ -10,9 +10,10 @@ import {decodedScanner} from '../../../types';
 
 interface Props {
   onDataScanned: (data: decodedScanner) => void;
+  setShowScanner: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const CodeScanner = ({onDataScanned}: Props) => {
+export const CodeScanner = ({onDataScanned, setShowScanner}: Props) => {
   const [cameraReady, setCameraReady] = useState(false);
   const [decodedData, setDecodedData] = useState<decodedScanner>({
     cedula: '',
@@ -23,7 +24,7 @@ export const CodeScanner = ({onDataScanned}: Props) => {
   });
   const device = useCameraDevice('back');
   const {hasPermission, requestPermission} = useCameraPermission();
-  const cameraRef = useRef(null);
+  const cameraRef = useRef<Camera>(null);
 
   useEffect(() => {
     requestPermission().then(status => {
@@ -34,7 +35,7 @@ export const CodeScanner = ({onDataScanned}: Props) => {
   }, [requestPermission]);
 
   const parseData = (data: any) => {
-    const parsedData = {...decodedData}; // Create a copy of decodedData
+    const parsedData = {...decodedData};
 
     console.log('Raw data:', data);
 
@@ -65,7 +66,7 @@ export const CodeScanner = ({onDataScanned}: Props) => {
 
       const vinSecondIndex = data.indexOf(parsedData.vin, vinStartIndex + 17);
       if (vinSecondIndex !== -1) {
-        const modelIndex = vinSecondIndex + parsedData.vin.length + 7; // Adding 7 to skip the 7 digits
+        const modelIndex = vinSecondIndex + parsedData.vin.length + 7;
         const modelMatch = data
           .substring(modelIndex, modelIndex + 4)
           .match(/\b(19[5-9]\d|20[0-2]\d|2030)\b/);
@@ -135,7 +136,7 @@ export const CodeScanner = ({onDataScanned}: Props) => {
       {!cameraReady && (
         <Text style={styles.loadingText}>Cargando cámara...</Text>
       )}
-      <View style={styles.dataContainer}>
+      {/* <View style={styles.dataContainer}>
         <Text style={styles.dataText}>Cédula: {decodedData.cedula}</Text>
         <Text style={styles.dataText}>
           Nombre Completo: {decodedData.nombreCompleto}
@@ -143,13 +144,20 @@ export const CodeScanner = ({onDataScanned}: Props) => {
         <Text style={styles.dataText}>Placa: {decodedData.placa}</Text>
         <Text style={styles.dataText}>VIN: {decodedData.vin}</Text>
         <Text style={styles.dataText}>Modelo: {decodedData.modelo}</Text>
+      </View> */}
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          style={styles.captureButton}
+          onPress={handleTakePicture}
+          disabled={!cameraReady}>
+          <Text>Capturar Foto</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.closeCamera}
+          onPress={() => setShowScanner(false)}>
+          <Text>Cerrar Cámara</Text>
+        </TouchableOpacity>
       </View>
-      <TouchableOpacity
-        style={styles.captureButton}
-        onPress={handleTakePicture}
-        disabled={!cameraReady}>
-        <Text style={styles.captureButtonText}>Capturar Foto</Text>
-      </TouchableOpacity>
     </View>
   );
 };
@@ -157,7 +165,7 @@ export const CodeScanner = ({onDataScanned}: Props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'black', // Fondo negro para la cámara
+    backgroundColor: 'black',
     width: '100%',
     height: '100%',
     position: 'absolute',
@@ -184,15 +192,26 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   captureButton: {
-    position: 'absolute',
-    bottom: 20,
-    alignSelf: 'center',
-    backgroundColor: '#ffffff',
+    backgroundColor: '#00ACC1',
     padding: 10,
     borderRadius: 5,
   },
   captureButtonText: {
-    fontSize: 16,
-    color: '#000000',
+    backgroundColor: '#ffffff',
+    padding: 10,
+    borderRadius: 5,
+  },
+  closeCamera: {
+    backgroundColor: '#e21c45',
+    padding: 10,
+    borderRadius: 5,
+  },
+  buttonContainer: {
+    position: 'absolute',
+    bottom: 20,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
   },
 });

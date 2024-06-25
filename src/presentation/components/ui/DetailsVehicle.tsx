@@ -8,6 +8,7 @@ interface Props {
   plate: string;
   vin: string;
   isVisible: boolean;
+  modelo: string;
 }
 
 export const DetailsVehicle = ({
@@ -15,6 +16,7 @@ export const DetailsVehicle = ({
   nombre,
   plate,
   vin,
+  modelo,
   isVisible,
 }: Props) => {
   if (!isVisible) {
@@ -36,6 +38,10 @@ export const DetailsVehicle = ({
           <View style={styles.row}>
             <Text style={styles.label}>Placa:</Text>
             <Text style={styles.value}>{plate}</Text>
+          </View>
+          <View style={styles.row}>
+            <Text style={styles.label}>Modelo:</Text>
+            <Text style={styles.value}>{modelo}</Text>
           </View>
           <View style={styles.row}>
             <Text style={styles.label}>VIN:</Text>
