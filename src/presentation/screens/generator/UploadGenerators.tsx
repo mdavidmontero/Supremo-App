@@ -232,7 +232,8 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 20,
-    color: '#333',
+    color: '#00ACC1',
+    textAlign: 'center',
   },
   textSelected: {
     color: '#00ACC1',

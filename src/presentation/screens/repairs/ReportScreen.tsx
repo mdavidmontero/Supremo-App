@@ -47,11 +47,12 @@ export const ReportScreen = ({route, navigation}: ReportScreenProps) => {
 
   const loadData = async () => {
     try {
-      const generatorDoc = await firestore()
-        .collection('generators')
-        .doc(generator)
+      const generatorQuerySnapshot = await firestore()
+        .collection('generadores')
+        .where('id', '==', generator)
         .get();
-      if (generatorDoc.exists) {
+      if (!generatorQuerySnapshot.empty) {
+        const generatorDoc = generatorQuerySnapshot.docs[0];
         setDatos(generatorDoc.data());
       } else {
         console.log('No such document!');

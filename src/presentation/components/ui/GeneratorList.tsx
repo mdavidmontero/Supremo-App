@@ -31,12 +31,12 @@ export const GeneratorList = ({onSelect}: any) => {
     const fetchGenerators = async () => {
       try {
         const generatorList: Generator[] = [];
-        const querySnapshot = await firestore().collection('generators').get();
+        const querySnapshot = await firestore().collection('generadores').get();
         querySnapshot.forEach(documentSnapshot => {
           generatorList.push({
             ...documentSnapshot.data(),
-            id: documentSnapshot.id,
           } as Generator);
+          console.log(documentSnapshot);
         });
         setGenerators(generatorList);
         setFilteredGenerators(generatorList);
@@ -62,6 +62,7 @@ export const GeneratorList = ({onSelect}: any) => {
     );
     setFilteredGenerators(filtered);
   };
+  console.log(filteredGenerators);
 
   return (
     <>

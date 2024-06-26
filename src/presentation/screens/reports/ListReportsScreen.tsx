@@ -34,31 +34,39 @@ export const ListReportsScreen: FC = () => {
           .collection('reports')
           .orderBy('createdAt', 'desc')
           .get();
+
         const generatorPromises: Promise<Generator | null>[] = [];
 
-        querySnapshot.forEach(documentSnapshot => {
+        querySnapshot.forEach(async documentSnapshot => {
           const reportData = documentSnapshot.data() as Report;
           const id = documentSnapshot.id;
           const generatorId = reportData.generatorId;
 
           const generatorPromise = firestore()
             .collection('generadores')
-            .doc(generatorId)
+            .where('id', '==', generatorId)
             .get()
-            .then(generatorDoc => {
-              if (generatorDoc.exists) {
-                return {
-                  id: generatorDoc.id,
-                  ...generatorDoc.data(),
-                } as Generator;
+            .then(generatorQuerySnapshot => {
+              if (!generatorQuerySnapshot.empty) {
+                const generatorDoc = generatorQuerySnapshot.docs[0];
+                if (generatorDoc.exists) {
+                  return {
+                    id: generatorDoc.id,
+                    ...generatorDoc.data(),
+                  } as Generator;
+                } else {
+                  console.warn(`Generator with id ${generatorId} not found`);
+                  return null;
+                }
               } else {
                 console.warn(`Generator with id ${generatorId} not found`);
                 return null;
               }
             })
             .catch(error => {
-              throw new Error(
+              console.error(
                 `Error fetching generator with id ${generatorId}: `,
+                error,
               );
               return null;
             });
@@ -66,6 +74,7 @@ export const ListReportsScreen: FC = () => {
           generatorPromises.push(generatorPromise);
           reportList.push({id, ...reportData} as any);
         });
+
         const generators = await Promise.all(generatorPromises);
 
         reportList.forEach((report, index) => {
@@ -74,7 +83,7 @@ export const ListReportsScreen: FC = () => {
 
         setReports(reportList);
       } catch (error) {
-        throw new Error(`Error fetching reports:  ${error}`);
+        console.error(`Error fetching reports:  ${error}`);
       } finally {
         setLoading(false);
       }
@@ -154,9 +163,7 @@ export const ListReportsScreen: FC = () => {
         />
         {loading && (
           <View style={styles.loadingContainer}>
-            <Text>
-              <ActivityIndicator size="large" color="#00ACC1" />{' '}
-            </Text>
+            <ActivityIndicator size="large" color="#00ACC1" />
           </View>
         )}
 
@@ -197,7 +204,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   loadingContainer: {
-    display: 'flex',
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
