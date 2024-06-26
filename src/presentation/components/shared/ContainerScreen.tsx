@@ -1,5 +1,5 @@
 import {DrawerActions, useNavigation, useRoute} from '@react-navigation/native';
-import React from 'react';
+import React, {FC} from 'react';
 import {
   Dimensions,
   Pressable,
@@ -21,14 +21,10 @@ export type ContainerScreenProps = {
   text: string;
 };
 
-export const ContainerScreen: React.FC<ContainerScreenProps> = ({
-  children,
-  text,
-}) => {
+export const ContainerScreen: FC<ContainerScreenProps> = ({children, text}) => {
   const navigation = useNavigation();
   const route = useRoute();
 
-  // Función para manejar la navegación al menú
   const toggleDrawer = () => {
     navigation.dispatch(DrawerActions.toggleDrawer());
   };

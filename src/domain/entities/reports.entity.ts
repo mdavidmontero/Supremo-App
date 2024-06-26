@@ -1,6 +1,5 @@
 export interface Report {
   vin: string;
-  vehicleId: string;
   generatorId: string;
   observations: {text: string; createdAt: Date}[];
   status: 'pending' | 'completed' | 'cancelled';

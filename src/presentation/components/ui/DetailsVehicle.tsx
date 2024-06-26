@@ -3,20 +3,20 @@ import {StyleSheet, View} from 'react-native';
 import {Card, Text} from 'react-native-paper';
 
 interface Props {
-  model: string;
-  year: number;
+  cedula: string;
+  nombre: string;
   plate: string;
-  color: string;
-  vim: string;
+  vin: string;
   isVisible: boolean;
+  modelo: string;
 }
 
 export const DetailsVehicle = ({
-  model,
-  year,
+  cedula,
+  nombre,
   plate,
-  color,
-  vim,
+  vin,
+  modelo,
   isVisible,
 }: Props) => {
   if (!isVisible) {
@@ -28,24 +28,24 @@ export const DetailsVehicle = ({
         <Card.Content>
           <Text style={styles.title}>Detalles del Vehículo</Text>
           <View style={styles.row}>
-            <Text style={styles.label}>Modelo:</Text>
-            <Text style={styles.value}>{model}</Text>
+            <Text style={styles.label}>Cedula:</Text>
+            <Text style={styles.value}>{cedula}</Text>
           </View>
           <View style={styles.row}>
-            <Text style={styles.label}>Año:</Text>
-            <Text style={styles.value}>{year}</Text>
+            <Text style={styles.label}>Nombre:</Text>
+            <Text style={styles.value}>{nombre}</Text>
           </View>
           <View style={styles.row}>
             <Text style={styles.label}>Placa:</Text>
             <Text style={styles.value}>{plate}</Text>
           </View>
           <View style={styles.row}>
-            <Text style={styles.label}>Color:</Text>
-            <Text style={styles.value}>{color}</Text>
+            <Text style={styles.label}>Modelo:</Text>
+            <Text style={styles.value}>{modelo}</Text>
           </View>
           <View style={styles.row}>
-            <Text style={styles.label}>VIM:</Text>
-            <Text style={styles.value}>{vim}</Text>
+            <Text style={styles.label}>VIN:</Text>
+            <Text style={styles.value}>{vin}</Text>
           </View>
         </Card.Content>
       </Card>
@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   title: {
-    fontSize: 22,
+    fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
     textAlign: 'center',

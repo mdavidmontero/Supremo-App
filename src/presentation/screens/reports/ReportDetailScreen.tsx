@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -11,12 +11,23 @@ import {
   SafeAreaView,
 } from 'react-native';
 import ContainerScreen from '../../components/shared/ContainerScreen';
+import {getVehicleByVin} from '../../../actions/get-vehicle';
+import {Vehicle} from '../../../types';
 
 const {width, height} = Dimensions.get('window');
 
 const DetailReportScreen = ({route}: any) => {
   const {report} = route.params;
   const [modalVisible, setModalVisible] = useState(false);
+  const [vehicle, setVehicle] = useState<Vehicle | null>(null);
+
+  useEffect(() => {
+    loadvehicle();
+  }, []);
+  const loadvehicle = async () => {
+    const data = await getVehicleByVin(report.vin);
+    setVehicle(data!);
+  };
 
   const handleOpenModal = () => {
     setModalVisible(true);
@@ -42,6 +53,18 @@ const DetailReportScreen = ({route}: any) => {
           <View style={styles.card}>
             <Text style={styles.label}>Vin</Text>
             <Text style={styles.value}>{report.vin}</Text>
+          </View>
+          <View style={styles.card}>
+            <Text style={styles.label}>Nombre</Text>
+            <Text style={styles.value}>{vehicle?.nombreCompleto}</Text>
+          </View>
+          <View style={styles.card}>
+            <Text style={styles.label}>Placa</Text>
+            <Text style={styles.value}>{vehicle?.placa}</Text>
+          </View>
+          <View style={styles.card}>
+            <Text style={styles.label}>Modelo</Text>
+            <Text style={styles.value}>{vehicle?.modelo}</Text>
           </View>
           <View style={styles.card}>
             <Text style={styles.label}>Status</Text>
@@ -105,10 +128,10 @@ const styles = StyleSheet.create({
   safeContainer: {
     flex: 1,
     backgroundColor: '#B2EBF2',
+    borderRadius: 20,
   },
   container: {
     flex: 1,
-    backgroundColor: '#B2EBF2',
     alignItems: 'center',
     padding: 20,
     borderRadius: 10,

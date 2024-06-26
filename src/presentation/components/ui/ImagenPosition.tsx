@@ -18,3 +18,19 @@ export const ImagenPosition = ({style}: Props) => {
     />
   );
 };
+
+export const ImagenPositionTop = ({style}: Props) => {
+  const fontImg = require('../../../assets/Figure_Arriba.png');
+  return (
+    <Image
+      source={fontImg}
+      style={[
+        {
+          width: 300,
+          height: 300,
+        },
+        style,
+      ]}
+    />
+  );
+};

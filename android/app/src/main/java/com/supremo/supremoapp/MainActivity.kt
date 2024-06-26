@@ -1,4 +1,4 @@
-package com.supremoapp
+package com.supremo.supremoapp
 import android.os.Bundle;
 
 import com.facebook.react.ReactActivity

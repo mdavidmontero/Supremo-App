@@ -34,31 +34,39 @@ export const ListReportsScreen: FC = () => {
           .collection('reports')
           .orderBy('createdAt', 'desc')
           .get();
+
         const generatorPromises: Promise<Generator | null>[] = [];
 
-        querySnapshot.forEach(documentSnapshot => {
+        querySnapshot.forEach(async documentSnapshot => {
           const reportData = documentSnapshot.data() as Report;
           const id = documentSnapshot.id;
           const generatorId = reportData.generatorId;
 
           const generatorPromise = firestore()
             .collection('generadores')
-            .doc(generatorId)
+            .where('id', '==', generatorId)
             .get()
-            .then(generatorDoc => {
-              if (generatorDoc.exists) {
-                return {
-                  id: generatorDoc.id,
-                  ...generatorDoc.data(),
-                } as Generator;
+            .then(generatorQuerySnapshot => {
+              if (!generatorQuerySnapshot.empty) {
+                const generatorDoc = generatorQuerySnapshot.docs[0];
+                if (generatorDoc.exists) {
+                  return {
+                    id: generatorDoc.id,
+                    ...generatorDoc.data(),
+                  } as Generator;
+                } else {
+                  console.warn(`Generator with id ${generatorId} not found`);
+                  return null;
+                }
               } else {
                 console.warn(`Generator with id ${generatorId} not found`);
                 return null;
               }
             })
             .catch(error => {
-              throw new Error(
+              console.error(
                 `Error fetching generator with id ${generatorId}: `,
+                error,
               );
               return null;
             });
@@ -66,6 +74,7 @@ export const ListReportsScreen: FC = () => {
           generatorPromises.push(generatorPromise);
           reportList.push({id, ...reportData} as any);
         });
+
         const generators = await Promise.all(generatorPromises);
 
         reportList.forEach((report, index) => {
@@ -74,7 +83,7 @@ export const ListReportsScreen: FC = () => {
 
         setReports(reportList);
       } catch (error) {
-        throw new Error(`Error fetching reports:  ${error}`);
+        console.error(`Error fetching reports:  ${error}`);
       } finally {
         setLoading(false);
       }
@@ -82,8 +91,6 @@ export const ListReportsScreen: FC = () => {
 
     fetchReports();
   }, []);
-
-  console.log(reports);
 
   const handleReportPress = (report: Report) => {
     navigation.navigate('DetailReportScreen', {report});
@@ -96,8 +103,11 @@ export const ListReportsScreen: FC = () => {
       {item.generator && (
         <FadeInImage uri={item.generator.imagen} style={styles.image} />
       )}
-      <Text style={styles.title}>{item.vin}</Text>
-      <Text style={styles.subtitle}>{item.status}</Text>
+      <Text style={styles.title}>VIN:{item.vin}</Text>
+      <Text style={styles.subtitle}>Estado: {item.status}</Text>
+      <Text style={styles.subtitle}>
+        Observation: {item.observations[0].text}
+      </Text>
     </TouchableOpacity>
   );
 
@@ -106,16 +116,6 @@ export const ListReportsScreen: FC = () => {
       (filter === 'all' || report.status === filter) &&
       report.vin.toLowerCase().includes(search.toLowerCase()),
   );
-
-  if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <Text>
-          <ActivityIndicator size="large" color="#00ACC1" />{' '}
-        </Text>
-      </View>
-    );
-  }
 
   return (
     <View style={styles.container}>
@@ -157,18 +157,37 @@ export const ListReportsScreen: FC = () => {
         <TextInput
           style={styles.searchInput}
           placeholderTextColor="#c2c2c2"
-          placeholder="Search by VIN"
+          placeholder="Buscar VIN"
           value={search}
           onChangeText={setSearch}
         />
-        <View style={styles.columnContainer}>
-          <FlatList
-            data={filteredReports}
-            renderItem={renderItem}
-            keyExtractor={item => item.ids}
-            contentContainerStyle={styles.flatlistContainer}
-          />
-        </View>
+        {loading && (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#00ACC1" />
+          </View>
+        )}
+
+        {filteredReports.length > 0 ? (
+          <View style={styles.columnContainer}>
+            <FlatList
+              data={filteredReports}
+              renderItem={renderItem}
+              keyExtractor={item => item.ids}
+              contentContainerStyle={styles.flatlistContainer}
+            />
+          </View>
+        ) : (
+          <Text
+            style={{
+              color: '#00ACC1',
+              margin: 10,
+              textAlign: 'center',
+              fontWeight: 'semibold',
+              fontSize: 18,
+            }}>
+            No hay reportes que mostrar
+          </Text>
+        )}
       </ContainerScreen>
     </View>
   );
@@ -194,11 +213,12 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: '#B2EBF2',
     padding: 10,
-    borderRadius: 10,
+    borderRadius: 20,
     marginVertical: 5,
-    shadowColor: '#000',
+    borderColor: '#00ACC1',
+    borderWidth: 0.8,
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
@@ -208,14 +228,14 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 5,
-    color: '#000',
+    color: '#00ACC1',
   },
   subtitle: {
     fontSize: 16,
     color: '#666',
   },
   image: {
-    width: '100%',
+    width: '60%',
     height: 150,
     borderRadius: 10,
     marginBottom: 10,
@@ -242,8 +262,8 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     height: 40,
-    borderColor: '#ccc',
-    borderWidth: 1,
+    borderColor: '#00ACC1',
+    borderWidth: 2,
     borderRadius: 5,
     margin: 10,
     paddingLeft: 10,

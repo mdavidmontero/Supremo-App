@@ -1,5 +1,9 @@
 import React, {useEffect, useState} from 'react';
-import {DrawerActions, useNavigation} from '@react-navigation/native';
+import {
+  DrawerActions,
+  NavigationProp,
+  useNavigation,
+} from '@react-navigation/native';
 import {
   SafeAreaView,
   View,
@@ -21,13 +25,17 @@ import {Report} from '../../../domain/entities/report.entity';
 
 const {width, height} = Dimensions.get('window');
 
+type RootStackParamList = {
+  DetailReportScreen: {report: Report};
+};
+
 export const HomeScreen = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const [reports, setReports] = useState<Report[]>([]);
   const [loading, setLoading] = useState(false);
   const [lastDoc, setLastDoc] = useState<any>(null);
   const [fetchingMore, setFetchingMore] = useState(false);
-  const [refreshing, setRefreshing] = useState(false); // Nuevo estado para el refresco
+  const [refreshing, setRefreshing] = useState(false);
 
   const loadData = async () => {
     setLoading(true);
@@ -74,7 +82,6 @@ export const HomeScreen = () => {
   }, []);
 
   const navigateToDetail = (item: Report) => {
-    // Navegar a la pantalla de detalles, pasando el reporte como parámetro
     navigation.navigate('DetailReportScreen', {report: item});
   };
 
@@ -82,9 +89,15 @@ export const HomeScreen = () => {
     <Pressable onPress={() => navigateToDetail(item)}>
       <View style={styles.card}>
         {item.createdAt && (
-          <Text style={{color: 'grey', fontSize: 15}}>
-            {item.createdAt.toLocaleDateString()}{' '}
-            {item.createdAt.toLocaleTimeString()}
+          <Text
+            style={{
+              color: 'grey',
+              fontSize: 15,
+              marginHorizontal: 10,
+              marginTop: 10,
+            }}>
+            {new Date(item.createdAt).toLocaleDateString()}{' '}
+            {new Date(item.createdAt).toLocaleTimeString()}
           </Text>
         )}
         <View style={styles.row}>
@@ -123,6 +136,20 @@ export const HomeScreen = () => {
           <Title text="News" />
           <Text style={styles.subtitle}>Latest reports</Text>
         </View>
+        <View>
+          {loading && <ActivityIndicator size="large" color="#00ACC1" />}
+          {reports.length === 0 && (
+            <Text
+              style={{
+                fontSize: 20,
+                fontWeight: 'bold',
+                textAlign: 'center',
+              }}>
+              No hay reportes{' '}
+            </Text>
+          )}
+        </View>
+
         <View style={styles.listContainer}>
           {loading ? (
             <ActivityIndicator size="large" color="#00ACC1" />
@@ -172,8 +199,10 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     justifyContent: 'flex-start',
+    alignItems: 'center',
     marginBottom: 5,
     flexWrap: 'wrap',
+    marginHorizontal: 10,
   },
   label: {
     fontSize: 16,
@@ -187,7 +216,7 @@ const styles = StyleSheet.create({
   },
   topCircle: {
     width: '100%',
-    height: '30%',
+    height: height * 0.25,
     backgroundColor: '#00ACC1',
     borderBottomLeftRadius: width / 3,
     borderBottomRightRadius: width / 3,
@@ -207,13 +236,14 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     paddingVertical: 20,
+    paddingHorizontal: 10,
   },
   card: {
     backgroundColor: '#fff',
     padding: 10,
     borderRadius: 10,
     marginVertical: 10,
-    marginHorizontal: 20,
+    marginHorizontal: 10,
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
@@ -239,15 +269,13 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     flex: 1,
-    marginTop: -120,
+    marginTop: -70,
+    marginHorizontal: 10,
   },
   subtitle: {
     fontSize: 20,
     color: '#FFF',
     fontWeight: 'bold',
-    position: 'absolute',
-    paddingHorizontal: 25,
-    left: 0,
   },
   generatorImage: {
     width: '40%',

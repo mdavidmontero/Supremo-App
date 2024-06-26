@@ -4,12 +4,20 @@ import {Report} from '../domain/entities/report.entity';
 
 const getGeneratorById = async (generatorId: string) => {
   try {
-    const generatorDoc = await firestore()
+    const generatorQuerySnapshot = await firestore()
       .collection('generadores')
-      .doc(generatorId)
+      .where('id', '==', generatorId)
       .get();
-    if (generatorDoc.exists) {
-      return generatorDoc.data();
+
+    if (!generatorQuerySnapshot.empty) {
+      const generatorDoc = generatorQuerySnapshot.docs[0];
+
+      if (generatorDoc.exists) {
+        return generatorDoc.data();
+      } else {
+        console.warn(`Generator with id ${generatorId} not found`);
+        return null;
+      }
     } else {
       console.warn(`Generator with id ${generatorId} not found`);
       return null;
