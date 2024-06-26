@@ -10,6 +10,8 @@ import GeneratorDetailScreen from '../components/ui/GeneratorDetails';
 import DetailReportScreen from '../screens/reports/ReportDetailScreen';
 import ListReportsScreen from '../screens/reports/ListReportsScreen';
 import {Vehicle} from '../../types';
+import UploadScreen from '../screens/generator/UploadGenerators';
+import UploadGenerator from '../screens/generator/UploadGenerators';
 
 export type RootStackParamList = {
   navigate: any;
@@ -31,6 +33,7 @@ export type RootStackParamList = {
   };
   DetailReportScreen: undefined;
   ListReportsScreen: undefined;
+  UploadData: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -54,6 +57,7 @@ export const StackNavigator = () => {
       <Stack.Screen name="GeneratorDetail" component={GeneratorDetailScreen} />
       <Stack.Screen name="ListReportsScreen" component={ListReportsScreen} />
       <Stack.Screen name="DetailReportScreen" component={DetailReportScreen} />
+      <Stack.Screen name="UploadData" component={UploadGenerator} />
     </Stack.Navigator>
   );
 };

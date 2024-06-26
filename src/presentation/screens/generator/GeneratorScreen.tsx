@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   View,
   TextInputProps,
+  Button,
 } from 'react-native';
 import {ContainerScreen} from '../../components/shared/ContainerScreen';
 import {FadeInImage} from '../../components/ui/FadeInImage';
@@ -15,6 +16,7 @@ import {useNavigation, NavigationProp} from '@react-navigation/native';
 import {Generator} from '../../../infrastructure/interfaces/generator-db.response';
 type RootStackParamList = {
   GeneratorDetail: {generator: Generator};
+  UploadData: undefined;
 };
 
 export const GeneratorScreen: React.FC = () => {
@@ -67,6 +69,18 @@ export const GeneratorScreen: React.FC = () => {
   return (
     <View style={styles.container}>
       <ContainerScreen text="Generators">
+        <TouchableOpacity
+          style={styles.btnUpload}
+          onPress={() => navigation.navigate('UploadData')}>
+          <Text
+            style={{
+              color: '#FFF',
+              textAlign: 'center',
+              fontWeight: 'semibold',
+            }}>
+            Cargar Generadores
+          </Text>
+        </TouchableOpacity>
         <TextInput
           style={styles.searchInput}
           placeholder="Buscar generador..."
@@ -74,18 +88,31 @@ export const GeneratorScreen: React.FC = () => {
           value={searchText}
           onChangeText={setSearchText}
         />
-        <View style={styles.columnContainer}>
-          {filteredGenerators.map(generator => (
-            <TouchableOpacity
-              key={generator.id}
-              style={styles.card}
-              onPress={() => handleGeneratorPress(generator)}>
-              <FadeInImage uri={generator.imagen} style={styles.image} />
-              <Text style={styles.title}>{generator.nombre}</Text>
-              <Text style={styles.description}>{generator.descripcion}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
+        {generators.length ? (
+          <View style={styles.columnContainer}>
+            {filteredGenerators.map(generator => (
+              <TouchableOpacity
+                key={generator.id}
+                style={styles.card}
+                onPress={() => handleGeneratorPress(generator)}>
+                <FadeInImage uri={generator.imagen} style={styles.image} />
+                <Text style={styles.title}>{generator.nombre}</Text>
+                <Text style={styles.description}>{generator.descripcion}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        ) : (
+          <Text
+            style={{
+              color: '#00ACC1',
+              margin: 10,
+              textAlign: 'center',
+              fontWeight: 'semibold',
+              fontSize: 18,
+            }}>
+            No hay Generadores
+          </Text>
+        )}
       </ContainerScreen>
     </View>
   );
@@ -120,6 +147,18 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
+  },
+  btnUpload: {
+    backgroundColor: '#00ACC1',
+    color: '#FFF',
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    padding: 10,
+    margin: 10,
   },
   image: {
     width: '100%',

@@ -16,7 +16,6 @@ export const getVehicleByVin = async (id: string): Promise<Vehicle> => {
     const vehicle = await VehicleMapper.fromVehicleDBEntity(data[0]);
     return vehicle;
   } catch (error) {
-    console.log(error);
     throw new Error('Error getting vehicle by vin');
   }
 };

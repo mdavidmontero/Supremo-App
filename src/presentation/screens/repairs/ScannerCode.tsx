@@ -37,20 +37,16 @@ export const CodeScanner = ({onDataScanned, setShowScanner}: Props) => {
   const parseData = (data: any) => {
     const parsedData = {...decodedData};
 
-    console.log('Raw data:', data);
-
     const cedulaMatch = data.match(/C\d{1,10}/);
     if (cedulaMatch) {
       parsedData.cedula = cedulaMatch[0].replace(/^C/, '');
     }
-    console.log('Cedula:', parsedData.cedula);
 
     const nameMatch = data.match(/\b[A-Z]+\b(?:\s+[A-Z]+\b){0,2}/);
     if (nameMatch) {
       const formattedName = nameMatch[0].replace(/\s+/g, ' ');
       parsedData.nombreCompleto = formattedName.trim();
     }
-    console.log('Nombre Completo:', parsedData.nombreCompleto);
 
     const plateMatch = data.match(/[A-Z]{3}\d{3}/);
     if (plateMatch) {
@@ -61,9 +57,6 @@ export const CodeScanner = ({onDataScanned, setShowScanner}: Props) => {
       const vin = data.substring(vinStartIndex, vinStartIndex + 17);
       parsedData.vin = vin;
 
-      console.log('Placa:', parsedData.placa);
-      console.log('VIN:', parsedData.vin);
-
       const vinSecondIndex = data.indexOf(parsedData.vin, vinStartIndex + 17);
       if (vinSecondIndex !== -1) {
         const modelIndex = vinSecondIndex + parsedData.vin.length + 7;
@@ -73,7 +66,6 @@ export const CodeScanner = ({onDataScanned, setShowScanner}: Props) => {
         if (modelMatch) {
           parsedData.modelo = modelMatch[0];
         }
-        console.log('Modelo:', parsedData.modelo);
       }
     }
 
@@ -83,7 +75,6 @@ export const CodeScanner = ({onDataScanned, setShowScanner}: Props) => {
   const codeScanner = useCodeScanner({
     codeTypes: ['pdf-417'],
     onCodeScanned: async codes => {
-      console.log(`Scanned ${codes.length} codes!`);
       codes.forEach(async code => {
         console.log(`${code.type}: ${code.value}`);
         const parsedData = parseData(code.value);
@@ -136,15 +127,6 @@ export const CodeScanner = ({onDataScanned, setShowScanner}: Props) => {
       {!cameraReady && (
         <Text style={styles.loadingText}>Cargando cámara...</Text>
       )}
-      {/* <View style={styles.dataContainer}>
-        <Text style={styles.dataText}>Cédula: {decodedData.cedula}</Text>
-        <Text style={styles.dataText}>
-          Nombre Completo: {decodedData.nombreCompleto}
-        </Text>
-        <Text style={styles.dataText}>Placa: {decodedData.placa}</Text>
-        <Text style={styles.dataText}>VIN: {decodedData.vin}</Text>
-        <Text style={styles.dataText}>Modelo: {decodedData.modelo}</Text>
-      </View> */}
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={styles.captureButton}

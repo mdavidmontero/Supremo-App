@@ -48,7 +48,7 @@ export const ReportScreen = ({route, navigation}: ReportScreenProps) => {
   const loadData = async () => {
     try {
       const generatorDoc = await firestore()
-        .collection('generadores')
+        .collection('generators')
         .doc(generator)
         .get();
       if (generatorDoc.exists) {

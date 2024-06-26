@@ -31,7 +31,7 @@ export const GeneratorList = ({onSelect}: any) => {
     const fetchGenerators = async () => {
       try {
         const generatorList: Generator[] = [];
-        const querySnapshot = await firestore().collection('generadores').get();
+        const querySnapshot = await firestore().collection('generators').get();
         querySnapshot.forEach(documentSnapshot => {
           generatorList.push({
             ...documentSnapshot.data(),
@@ -69,7 +69,7 @@ export const GeneratorList = ({onSelect}: any) => {
         style={globalStyles.buttonSucces}
         mode="contained"
         onPress={() => setModalVisible(true)}>
-        Select Generator
+        Seleccionar Generador
       </Button>
       <Provider>
         <Portal>

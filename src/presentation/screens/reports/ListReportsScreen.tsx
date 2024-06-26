@@ -108,12 +108,6 @@ export const ListReportsScreen: FC = () => {
       report.vin.toLowerCase().includes(search.toLowerCase()),
   );
 
-  // if (loading) {
-  //   return (
-
-  //   );
-  // }
-
   return (
     <View style={styles.container}>
       <ContainerScreen text="Reports">
@@ -154,7 +148,7 @@ export const ListReportsScreen: FC = () => {
         <TextInput
           style={styles.searchInput}
           placeholderTextColor="#c2c2c2"
-          placeholder="Search by VIN"
+          placeholder="Buscar VIN"
           value={search}
           onChangeText={setSearch}
         />
@@ -165,14 +159,28 @@ export const ListReportsScreen: FC = () => {
             </Text>
           </View>
         )}
-        <View style={styles.columnContainer}>
-          <FlatList
-            data={filteredReports}
-            renderItem={renderItem}
-            keyExtractor={item => item.ids}
-            contentContainerStyle={styles.flatlistContainer}
-          />
-        </View>
+
+        {filteredReports.length > 0 ? (
+          <View style={styles.columnContainer}>
+            <FlatList
+              data={filteredReports}
+              renderItem={renderItem}
+              keyExtractor={item => item.ids}
+              contentContainerStyle={styles.flatlistContainer}
+            />
+          </View>
+        ) : (
+          <Text
+            style={{
+              color: '#00ACC1',
+              margin: 10,
+              textAlign: 'center',
+              fontWeight: 'semibold',
+              fontSize: 18,
+            }}>
+            No hay reportes que mostrar
+          </Text>
+        )}
       </ContainerScreen>
     </View>
   );

@@ -36,7 +36,6 @@ export const RepairsScreen = () => {
       }) as any;
     }
   };
-  console.log(scannedData);
 
   const handleDataScanned = (scannedData: decodedScanner) => {
     setScannedData(scannedData);
@@ -91,7 +90,7 @@ export const RepairsScreen = () => {
           mode="contained"
           onPress={handleProceed}
           disabled={!scannedData.cedula || !selectedGeneratorId}>
-          Proceed to Report
+          Proceder con el Reporte
         </Button>
 
         <TouchableOpacity
